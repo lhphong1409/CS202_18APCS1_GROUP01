@@ -1,0 +1,7 @@
+CPIG, CBIRD 
+CANIMAL : Position, Move, Tell, Veloc, Hitbox
+CTRUCK, CCAR :
+CVEHICLE : Position, Move, Velocity, Hitbox
+Trafficlight -> CGAME : bool color, time.
+Effect : bool slowdown vehicle, slowdown animal, shield, red light - stop all vehicle.
+
