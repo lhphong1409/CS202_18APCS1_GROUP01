@@ -9,10 +9,14 @@ void testDraw() {
 }
 int main() {
 	srand(time(NULL));
-	game = CGAME(3);
+	autoConfig();
+	game = CGAME(7);
 	while (1) {
 		system("cls");
 		testDraw();
+		if (GetAsyncKeyState(VK_ESCAPE)) {
+			break;
+		}
 		Sleep(1000);
 	}
 	system("pause");

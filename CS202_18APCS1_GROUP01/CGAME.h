@@ -1,8 +1,9 @@
 #ifndef _CGAME_H
 #define _CGAME_H
+
 #include "TEMPLATE.h"
 #include "DATA.h"
-
+#include "CONFIG.h"
 class CGAME {
 private:
 	std::vector<laneType> vLane;
