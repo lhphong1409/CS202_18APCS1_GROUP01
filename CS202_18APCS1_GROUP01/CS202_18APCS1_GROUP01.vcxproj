@@ -115,6 +115,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CGAME.cpp" />
+    <ClCompile Include="CTRAFFICLIGHT.cpp" />
+    <ClCompile Include="DATA.cpp" />
+    <ClCompile Include="demo.cpp" />
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CGAME.h" />
+    <ClInclude Include="CTRAFFICLIGHT.h" />
+    <ClInclude Include="DATA.h" />
+    <ClInclude Include="PATH.h" />
+    <ClInclude Include="TEMPLATE.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
