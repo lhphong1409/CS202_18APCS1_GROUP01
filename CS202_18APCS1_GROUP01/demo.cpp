@@ -14,7 +14,7 @@ void testDraw() {
 		if (GetAsyncKeyState(VK_ESCAPE)) {
 			break;
 		}
-		Sleep(1000);
+		Sleep(100);
 	}
 	std::cout << "\n#END DEMO 01\n\n";
 }

@@ -11,8 +11,8 @@ private:
 	std::vector<std::string> boardGame;
 	std::vector<CCAR> carList;
 	int nLane = 3; // default;
-	int max_lane_size = 180;
-	int vehicle_dis = 30;
+	int max_lane_size = 80;
+	int vehicle_dis = 7;
 	int animal_dis = 1;
 	//boardGame[i*10][j] = row i col j
 public:

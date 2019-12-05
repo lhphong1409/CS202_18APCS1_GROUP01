@@ -13,6 +13,8 @@ void autoConfig(){
 
 void GotoXY(int x, int y){
 	COORD coord;
+	x += 3;
+	y += 3;
 	coord.X = x;
 	coord.Y = y;
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);

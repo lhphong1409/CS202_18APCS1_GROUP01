@@ -1,7 +1,7 @@
 #include "CVEHICLE.h"
 
-void CVEHICLE::move(int & mX, int & my){
-	++my;
+void CVEHICLE::move(){
+	++mY;
 	return;
 }
 
@@ -15,5 +15,5 @@ CCAR::CCAR(int x, int y){
 	state = 0;
 	v = 100;
 	sX = 3;
-	sY = 10;
+	sY = 11;
 }
