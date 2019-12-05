@@ -4,4 +4,5 @@
 #include "TEMPLATE.h"
 
 void autoConfig();
+void GotoXY(int x, int y);
 #endif
