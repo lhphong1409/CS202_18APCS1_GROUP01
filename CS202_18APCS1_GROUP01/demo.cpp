@@ -2,6 +2,12 @@
 
 CGAME game;
 
+// init SDL
+
+
+
+// test
+
 void testDraw() {
 	srand(time(NULL));
 	autoConfig();
@@ -14,11 +20,16 @@ void testDraw() {
 		if (GetAsyncKeyState(VK_ESCAPE)) {
 			break;
 		}
-		Sleep(100);
+		Sleep(1000);
 	}
 	std::cout << "\n#END DEMO 01\n\n";
 }
+
+void testIngame() {
+	game.drawGame();
+}
 int main() {
-	testDraw();
-	system("pause");
+	// InitSDL
+	testIngame();
+	return 0;
 }
