@@ -12,5 +12,4 @@ public:
 	laneType();
 	laneType(enum LIGHTst cur_state);
 };
-
 #endif

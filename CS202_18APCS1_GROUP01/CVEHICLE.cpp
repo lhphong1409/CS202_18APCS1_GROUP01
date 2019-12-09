@@ -14,7 +14,6 @@ CCAR::CCAR(int x, int y){
 	mY = y;
 	sX = 224;
 	sY = 95;
-	path = image_vehicle_car;;
 	state = 0;
 	v = 10;
 }

@@ -28,6 +28,11 @@ void testDraw() {
 void testIngame() {
 	game.drawGame();
 }
+
+void testPeople() {
+
+}
+
 int main() {
 	// InitSDL
 	testIngame();

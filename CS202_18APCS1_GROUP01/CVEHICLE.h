@@ -8,7 +8,6 @@ public:
 	int mX, mY, sX, sY; // row - col;
 	int v; // velocity - v = ms for 1 unit of movement;
 	bool state;
-	std::string path;
 	virtual void move();
 	virtual void tell();
 };
