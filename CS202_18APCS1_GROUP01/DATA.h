@@ -4,6 +4,7 @@
 #include "CTRAFFICLIGHT.h"
 #include "TEMPLATE.h"
 
+const int lanePixel[3] = { 700, 400, 100 };
 
 class laneType{
 private:

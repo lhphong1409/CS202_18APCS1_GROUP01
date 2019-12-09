@@ -10,7 +10,7 @@ laneType::laneType(){
 		light.setTime(rand() % 3 + 1);
 	}
 	else {
-		light.setTime(rand() % 10 + 1);
+		light.setTime(rand() % 9 + 1);
 	}
 	return;
 }
@@ -22,7 +22,7 @@ laneType::laneType(enum LIGHTst cur_state) {
 			light.setTime(rand() % 3 + 1);
 		}
 		else {
-			light.setTime(rand() % 10 + 1);
+			light.setTime(rand() % 9 + 1);
 		}
 	return;
 }

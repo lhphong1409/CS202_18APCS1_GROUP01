@@ -1,11 +1,21 @@
 #include "CTRAFFICLIGHT.h"
 
+int CTRAFFICLIGHT::getFrame()
+{
+	return frame;
+}
+
 int CTRAFFICLIGHT::getTime(){
 	return time_;
 }
 
 enum LIGHTst CTRAFFICLIGHT::getState() {
 	return state_;
+}
+
+void CTRAFFICLIGHT::incFrame(){
+	++frame;
+	frame %= 60;
 }
 
 void CTRAFFICLIGHT::setState(enum LIGHTst cur_state_) {
@@ -29,7 +39,7 @@ void CTRAFFICLIGHT::CountDown(){
 			setTime(rand() % 3 + 1);
 		}
 		else {
-			setTime(rand() % 10 + 1);
+			setTime(rand() % 9 + 1);
 		}
 	}
 }
