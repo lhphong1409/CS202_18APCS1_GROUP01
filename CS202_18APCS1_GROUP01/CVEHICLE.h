@@ -19,4 +19,12 @@ class CCAR : public CVEHICLE {
 public:
 	CCAR(int x, int y);
 };
+class CTRUCK: public CVEHICLE {
+public:
+	CTRUCK(int x, int y);
+};
+class CBUS : public CVEHICLE {
+public:
+	CBUS(int x, int y);
+};
 #endif

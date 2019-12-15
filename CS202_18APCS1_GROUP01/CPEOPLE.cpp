@@ -2,7 +2,7 @@
 
 CPEOPLE::CPEOPLE(){
 	mState = 1;
-	v = 20;
+	v = 40;
 	mX = 0;
 	mY = 0;
 }
