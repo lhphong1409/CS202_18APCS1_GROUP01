@@ -11,19 +11,14 @@
 class CGAME {
 private:
 	std::vector<laneType> vLane;
-	std::vector<std::string> boardGame;
-	std::vector<CCAR> carList;
-	std::vector<CTRUCK>truckList;
-	std::vector<CBUS>busList;
-	std::vector<CDINOSAUR>dinosaurList;
-	std::vector<CCROCODILE>crocodileList;
-	std::vector<CHORSE>horseList;
+	std::vector<CVEHICLE> vehicleList;
 	CPEOPLE player;
 	int nLane = 3; // default;
 	int max_lane_size = 1500;
 	int vehicle_dis = 150;
 	int animal_dis = 150;
 	int FPS = 60;
+	int score = 0, level = 1;
 	SDL_Window *window = NULL;
 	SDL_Renderer *renderer = NULL;
 	SDL_Event mainEvent;
@@ -39,14 +34,17 @@ private:
 	bool isRunning = 1;
 public:
 	CGAME();
+	void Init();
 	void SetLane(int laneID);
 	SDL_Texture* loadTexture(std::string path);
+	void TextureLoad();
 	void People_Load(const int animation);
 	void Background_Load();
 	void Vehicle_Load();
 	void Animals_Load();
 	void TrafficLight_Load();
+	int CheckState();
 	void drawGame();
-	void CheckState();
+	void playGame();
 };
 #endif

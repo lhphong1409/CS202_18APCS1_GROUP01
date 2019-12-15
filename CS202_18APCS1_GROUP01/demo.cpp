@@ -1,6 +1,5 @@
 #include "CGAME.h"
 
-CGAME game;
 
 // init SDL
 
@@ -8,10 +7,10 @@ CGAME game;
 
 // test
 
-
+CGAME game;
 
 void testIngame() {
-	game.drawGame();
+	game.playGame();
 }
 
 void testPeople() {
