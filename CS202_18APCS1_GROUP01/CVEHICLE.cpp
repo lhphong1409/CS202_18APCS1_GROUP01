@@ -24,6 +24,26 @@ CCAR::CCAR(int x, int y){
 	sX = 224;
 	sY = 95;
 	state = 0;
-	v = default_v = 10;
+	v = default_v = 4;
 	lane = 0;
 }
+CTRUCK::CTRUCK(int x, int y) {
+	mX = x;
+	mY = y;
+	sX = 224;
+	sY = 95;
+	state = 0;
+	v = default_v = 6;
+	lane = 0;
+}
+CBUS::CBUS(int x, int y) {
+	mX = x;
+	mY = y;
+	sX = 224;
+	sY = 95;
+	state = 0;
+	v = default_v = 6;
+	lane = 0;
+}
+
+

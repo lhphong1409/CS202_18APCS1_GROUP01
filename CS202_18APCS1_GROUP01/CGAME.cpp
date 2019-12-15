@@ -151,6 +151,23 @@ void CGAME::Vehicle_Load(){
 	}
 	return;
 }
+void CGAME::Animals_Load() {
+	SDL_Rect sourceRect, desRect;
+	SDL_QueryTexture(horseTexture, NULL, NULL, &sourceRect.w, &sourceRect.h);
+	sourceRect.x = sourceRect.y = 0;
+	desRect.w = sourceRect.w;
+	desRect.h = sourceRect.h;
+	for (int iHorse = 0; iHorse < horseList.size(); iHorse++) {
+		desRect.x =	horseList[iHorse].mX;
+		desRect.y = horseList[iHorse].mY;
+		SDL_RenderCopy(renderer, horseTexture, &sourceRect, &desRect);
+		horseList[iHorse].setV(horseList[iHorse].default_v * (vLane[horseList[iHorse].lane].light.getState() != RED));
+		horseList[iHorse].move();
+		horseList[iHorse].mX %= max_lane_size;
+	}
+	return;
+}
+
 
 void CGAME::TrafficLight_Load(){
 	//lane format : pixel 100-200 400-500 700-800
