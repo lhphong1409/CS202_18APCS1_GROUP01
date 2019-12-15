@@ -2,7 +2,7 @@
 #define _CGAME_H
 
 #include "CVEHICLE.h"
-#include"CANIMALS.H"
+#include "CANIMALS.H"
 #include "TEMPLATE.h"
 #include "DATA.h"
 #include "CONFIG.h"
