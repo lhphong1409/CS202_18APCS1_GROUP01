@@ -36,3 +36,12 @@ CCROCODILE::CCROCODILE(int x, int y) {
 	v = default_v = 4;
 	lane = 0;
 }
+CHORSE::CHORSE(int x, int y) {
+	mX = x;
+	mY = y;
+	sX = 224;
+	sY = 95;
+	state = 0;
+	v = default_v = 4;
+	lane = 0;
+}

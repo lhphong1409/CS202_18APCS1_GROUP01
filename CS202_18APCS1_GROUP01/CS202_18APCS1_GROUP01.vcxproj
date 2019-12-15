@@ -123,6 +123,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CANIMALS.CPP" />
     <ClCompile Include="CGAME.cpp" />
     <ClCompile Include="CONFIG.cpp" />
     <ClCompile Include="CPEOPLE.cpp" />
@@ -133,6 +134,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CANIMALS.H" />
     <ClInclude Include="CGAME.h" />
     <ClInclude Include="CONFIG.h" />
     <ClInclude Include="CPEOPLE.h" />

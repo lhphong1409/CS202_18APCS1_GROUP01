@@ -23,4 +23,8 @@ class CCROCODILE : public CANIMALS {
 public:
 	CCROCODILE(int x, int y);
 };
+class CHORSE : public CANIMALS {
+public:
+	CHORSE(int x, int y);
+};
 #endif
