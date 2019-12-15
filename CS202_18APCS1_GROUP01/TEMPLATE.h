@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include <conio.h>
 #include "SDL.h"
-
+#include "SDL_ttf.h"
 
 #undef main()
 

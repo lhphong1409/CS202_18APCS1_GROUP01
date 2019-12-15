@@ -3,7 +3,8 @@
 
 #include "TEMPLATE.H"
 
-const std::string image_background = "image/background/background.bmp";
+const std::string image_background[3] = { "image/background/background1.bmp", "image/background/background2.bmp", "image/background/background3.bmp" };
+const std::string image_menu[4] = { "image/menu/menu1.bmp","image/menu/menu2.bmp","image/menu/menu3.bmp","image/menu/menu4.bmp", };
 const std::string image_vehicle_car = "image/vehicle/car/car.bmp";
 const std::string image_vehicle_truck = "image/vehicle/truck/truck.bmp";
 const std::string image_vehicle_bus = "image/vehicle/bus/bus.bmp";

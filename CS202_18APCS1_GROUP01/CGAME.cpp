@@ -26,6 +26,7 @@ void CGAME::Init() {
 	SetLane(1);
 	SetLane(2);
 }
+
 void CGAME::SetLane(int laneID){
 	//lane format : pixel 100-200 400-500 700-800
 	int cur_pos = rand() % vehicle_dis;
@@ -67,9 +68,26 @@ void CGAME::TextureLoad(){
 	busTexture = loadTexture(image_vehicle_bus);
 	truckTexture = loadTexture(image_vehicle_truck);
 
-	backgroundTexture = loadTexture(image_background);
+	backgroundTexture[0] = loadTexture(image_background[0]);
+	backgroundTexture[1] = loadTexture(image_background[1]);
+	backgroundTexture[2] = loadTexture(image_background[2]);
+
+	menuTexture[0] = loadTexture(image_menu[0]);
+	menuTexture[1] = loadTexture(image_menu[1]);
+	menuTexture[2] = loadTexture(image_menu[2]);
+	menuTexture[3] = loadTexture(image_menu[3]);
+
 	peopleTexture = loadTexture(image_people);
 	trafficlightTexture = loadTexture(image_trafficlight);
+}
+
+void CGAME::Menu_Load(int curChoice) {
+	SDL_Rect sourceRect, desRect;
+	SDL_QueryTexture(menuTexture[curChoice], NULL, NULL, &sourceRect.w, &sourceRect.h);
+	sourceRect.x = sourceRect.y = desRect.x = desRect.y = 0;
+	desRect.w = sourceRect.w;
+	desRect.h = sourceRect.h;
+	SDL_RenderCopy(renderer, menuTexture[curChoice], &sourceRect, &desRect);
 }
 
 void CGAME::People_Load(const int animation){
@@ -153,11 +171,11 @@ void CGAME::People_Load(const int animation){
 
 void CGAME::Background_Load() {
 	SDL_Rect sourceRect, desRect;
-	SDL_QueryTexture(backgroundTexture, NULL, NULL, &sourceRect.w, &sourceRect.h);
+	SDL_QueryTexture(backgroundTexture[level%3], NULL, NULL, &sourceRect.w, &sourceRect.h);
 	sourceRect.x = sourceRect.y = desRect.x = desRect.y = 0;
 	desRect.w = sourceRect.w;
 	desRect.h = sourceRect.h;
-	SDL_RenderCopy(renderer, backgroundTexture, &sourceRect, &desRect);
+	SDL_RenderCopy(renderer, backgroundTexture[level%3], &sourceRect, &desRect);
 	return;
 }
 
@@ -193,23 +211,6 @@ void CGAME::Vehicle_Load(){
 	}
 	return;
 }
-/*void CGAME::Animals_Load() {
-	SDL_Rect sourceRect, desRect;
-	SDL_QueryTexture(horseTexture, NULL, NULL, &sourceRect.w, &sourceRect.h);
-	sourceRect.x = sourceRect.y = 0;
-	desRect.w = sourceRect.w;
-	desRect.h = sourceRect.h;
-	for (int iHorse = 0; iHorse < horseList.size(); iHorse++) {
-		desRect.x =	horseList[iHorse].mX;
-		desRect.y = horseList[iHorse].mY;
-		SDL_RenderCopy(renderer, horseTexture, &sourceRect, &desRect);
-		horseList[iHorse].setV(horseList[iHorse].default_v * (vLane[horseList[iHorse].lane].light.getState() != RED));
-		horseList[iHorse].move();
-		horseList[iHorse].mX %= max_lane_size;
-	}
-	return;
-}*/
-
 
 void CGAME::TrafficLight_Load(){
 	//lane format : pixel 100-200 400-500 700-800
@@ -293,10 +294,10 @@ int CGAME::CheckState() {
 }
 
 void CGAME::drawGame(){
-	SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
 	std::cerr << "NEW GAME LEVEL" << level << "\n";
 	while (isRunning) {
 		SDL_RenderClear(renderer);
+		SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
 		Background_Load();
 		Vehicle_Load();
 		TrafficLight_Load();
@@ -305,7 +306,7 @@ void CGAME::drawGame(){
 		if (gameState != 0) {
 			isRunning = 0;
 			if (gameState < 0) {
-				level = 0;
+				level = -1;
 			}
 			else {
 				++level;
@@ -362,9 +363,55 @@ void CGAME::drawGame(){
 }
 
 void CGAME::playGame(){
-	while (level != -1) {
-		Init();
-		drawGame();
+	SDL_Event gameEvent;
+	bool running = 1;
+	int userChoice = -1, curChoice = 0;
+	while (running) {
+		std::cerr << userChoice << " " << curChoice << "\n";
+		SDL_RenderClear(renderer);
+		Menu_Load(curChoice);
+		while (SDL_PollEvent(&gameEvent)) {
+			switch (gameEvent.type) {
+			case SDL_KEYDOWN: {
+				switch (gameEvent.key.keysym.sym) {
+				case SDLK_ESCAPE: {
+					running = 0;
+					break;
+				}
+				case SDLK_UP: {
+					--curChoice;
+					curChoice = max(curChoice, 0);
+					break;
+				}
+				case SDLK_DOWN: {
+					++curChoice;
+					curChoice = min(curChoice, 3);
+					break;
+				}
+				case SDLK_RETURN: {
+					userChoice = curChoice;
+					break;
+				}
+				default:
+					break;
+				}
+			}
+			}
+		}
+		SDL_RenderPresent(renderer);
+		switch (userChoice) {
+		case (0):
+			level = rand() % 3;
+			while (level != -1) {
+				Init();
+				drawGame();
+			}
+			curChoice = 0;
+			userChoice = -1;
+			break;
+		default:
+			break;
+		}
 	}
 	SDL_DestroyWindow(window);
 	SDL_Quit();

@@ -12,6 +12,7 @@ class CGAME {
 private:
 	std::vector<laneType> vLane;
 	std::vector<CVEHICLE> vehicleList;
+	std::vector<CANIMALS> animalList;
 	CPEOPLE player;
 	int nLane = 3; // default;
 	int max_lane_size = 1500;
@@ -28,9 +29,10 @@ private:
 	SDL_Texture* dinosaurTexture = NULL;
 	SDL_Texture* crocodileTexture = NULL;
 	SDL_Texture* horseTexture = NULL;
-	SDL_Texture *backgroundTexture = NULL; 
+	SDL_Texture *backgroundTexture[3];
 	SDL_Texture *peopleTexture = NULL;
 	SDL_Texture *trafficlightTexture = NULL;
+	SDL_Texture *menuTexture[4];
 	bool isRunning = 1;
 public:
 	CGAME();
@@ -38,6 +40,7 @@ public:
 	void SetLane(int laneID);
 	SDL_Texture* loadTexture(std::string path);
 	void TextureLoad();
+	void Menu_Load(int curChoice);
 	void People_Load(const int animation);
 	void Background_Load();
 	void Vehicle_Load();

@@ -7,9 +7,9 @@
 
 // test
 
-CGAME game;
 
 void testIngame() {
+	CGAME game;
 	game.playGame();
 }
 
@@ -18,8 +18,6 @@ void testPeople() {
 }
 
 int main() {
-	// InitSDL
-
 	testIngame();
 	return 0;
 }
