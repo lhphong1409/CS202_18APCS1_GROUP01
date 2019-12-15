@@ -3,8 +3,8 @@
 CPEOPLE::CPEOPLE(){
 	mState = 1;
 	v = 40;
-	mX = 0;
-	mY = 0;
+	mX = 800;
+	mY = 790;
 }
 
 CPEOPLE::CPEOPLE(int x, int y){
@@ -28,7 +28,7 @@ int CPEOPLE::getmY(){
 
 void CPEOPLE::up(){
 	mY -= v;
-	mY = max(mY, 0);
+	mY = max(mY, -100);
 	return;
 }
 

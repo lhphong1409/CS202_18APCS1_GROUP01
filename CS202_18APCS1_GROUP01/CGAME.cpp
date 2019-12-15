@@ -5,31 +5,47 @@ CGAME::CGAME(){
 	SDL_Init(SDL_INIT_EVERYTHING);
 	window = SDL_CreateWindow("CrossRoad-Group-01.exe", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1600, 900, SDL_WINDOW_SHOWN);
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+
+	// lane : 10 x 180:
+	// set for CCAR
+	TextureLoad();
+
+	return;
+}
+
+void CGAME::Init() {
+	isRunning = 1;
+	player = CPEOPLE();
+	vLane.clear();
+	vehicleList.clear();
 	for (int i = 0; i < nLane; i++) {
 		laneType cur_laneType; // OFF-RED-YELLOW-GREEN
 		vLane.push_back(cur_laneType);
 	}
-	// lane : 10 x 180:
-	// set for CCAR
-	carTexture = loadTexture(image_vehicle_car);
-	backgroundTexture = loadTexture(image_background);
-	peopleTexture = loadTexture(image_people);
-	trafficlightTexture = loadTexture(image_trafficlight);
 	SetLane(0);
 	SetLane(1);
 	SetLane(2);
-	return;
 }
-
 void CGAME::SetLane(int laneID){
 	//lane format : pixel 100-200 400-500 700-800
-	CCAR car_obj(0, lanePixel[laneID]);
 	int cur_pos = rand() % vehicle_dis;
 	while (cur_pos + vehicle_dis + vehicle_dis <= max_lane_size) {
-		car_obj = CCAR(cur_pos, lanePixel[laneID]);
-		car_obj.setLane(laneID);
-		cur_pos += car_obj.sX + rand() % vehicle_dis + vehicle_dis;
-		carList.push_back(car_obj);
+		CARTYPE cur_type = static_cast<CARTYPE>(rand() % (3));
+		switch (cur_type) {
+		case CARTYPE::CAR:
+			vehicleList.push_back(CCAR(cur_pos, lanePixel[laneID], laneID));
+			break;
+		case CARTYPE::BUS:
+			vehicleList.push_back(CBUS(cur_pos, lanePixel[laneID], laneID));
+			break;
+		case CARTYPE::TRUCK:
+			vehicleList.push_back(CTRUCK(cur_pos, lanePixel[laneID], laneID));
+			break;
+		default:
+			break;
+		}
+		cur_pos += vehicleList.back().sX + rand() % vehicle_dis + vehicle_dis;
+		//std::cout << vehicleList.back().type << "\n";
 	}
 	return;
 }
@@ -45,9 +61,19 @@ SDL_Texture* CGAME::loadTexture(std::string path){
 	SDL_FreeSurface(loadedSurface);
 	return newTexture;
 }
+
+void CGAME::TextureLoad(){
+	carTexture = loadTexture(image_vehicle_car);
+	busTexture = loadTexture(image_vehicle_bus);
+	truckTexture = loadTexture(image_vehicle_truck);
+
+	backgroundTexture = loadTexture(image_background);
+	peopleTexture = loadTexture(image_people);
+	trafficlightTexture = loadTexture(image_trafficlight);
+}
+
 void CGAME::People_Load(const int animation){
 	// 80x80
-	int animateSize = 80;
 	SDL_Rect sourceRect, desRect;
 	SDL_QueryTexture(peopleTexture, NULL, NULL, &sourceRect.w, &sourceRect.h);
 	switch (animation){
@@ -115,6 +141,7 @@ void CGAME::People_Load(const int animation){
 			break;
 		}
 	}
+	int animateSize = sourceRect.w / 4;
 	sourceRect.x *= animateSize;
 	sourceRect.y *= animateSize;
 	desRect.x = player.getmX();
@@ -123,6 +150,7 @@ void CGAME::People_Load(const int animation){
 	desRect.h = sourceRect.h = animateSize;
 	SDL_RenderCopy(renderer, peopleTexture, &sourceRect, &desRect);
 }
+
 void CGAME::Background_Load() {
 	SDL_Rect sourceRect, desRect;
 	SDL_QueryTexture(backgroundTexture, NULL, NULL, &sourceRect.w, &sourceRect.h);
@@ -132,23 +160,40 @@ void CGAME::Background_Load() {
 	SDL_RenderCopy(renderer, backgroundTexture, &sourceRect, &desRect);
 	return;
 }
+
 void CGAME::Vehicle_Load(){
 	SDL_Rect sourceRect, desRect;
-	SDL_QueryTexture(carTexture, NULL, NULL, &sourceRect.w, &sourceRect.h);
-	sourceRect.x = sourceRect.y = 0;
-	desRect.w = sourceRect.w;
-	desRect.h = sourceRect.h;
-	for (int iCar = 0; iCar < carList.size(); iCar++) {
-		desRect.x = carList[iCar].mX;
-		desRect.y = carList[iCar].mY;
-		SDL_RenderCopy(renderer, carTexture, &sourceRect, &desRect);
-		carList[iCar].setV(carList[iCar].default_v * (vLane[carList[iCar].lane].light.getState() != RED));
-		carList[iCar].move();
-		carList[iCar].mX %= max_lane_size;
+	SDL_Texture *curTexture;
+	for (int iVe = 0; iVe < vehicleList.size(); iVe++) {
+		switch (vehicleList[iVe].type){
+		case CARTYPE::BUS:
+			curTexture = busTexture;
+			break;
+		case CARTYPE::TRUCK:
+			curTexture = truckTexture;
+			break;
+		case CARTYPE::CAR:
+			curTexture = carTexture;
+			break;
+
+		default:
+			curTexture = carTexture;
+			break;
+		}
+		SDL_QueryTexture(curTexture, NULL, NULL, &sourceRect.w, &sourceRect.h);
+		sourceRect.x = sourceRect.y = 0;
+		desRect.w = sourceRect.w;
+		desRect.h = sourceRect.h;
+		desRect.x = vehicleList[iVe].mX;
+		desRect.y = vehicleList[iVe].mY;
+		SDL_RenderCopy(renderer, curTexture, &sourceRect, &desRect);
+		vehicleList[iVe].setV((level / 3 + vehicleList[iVe].default_v) * (vLane[vehicleList[iVe].lane].light.getState() != RED));
+		vehicleList[iVe].move();
+		vehicleList[iVe].mX %= max_lane_size;
 	}
 	return;
 }
-void CGAME::Animals_Load() {
+/*void CGAME::Animals_Load() {
 	SDL_Rect sourceRect, desRect;
 	SDL_QueryTexture(horseTexture, NULL, NULL, &sourceRect.w, &sourceRect.h);
 	sourceRect.x = sourceRect.y = 0;
@@ -163,7 +208,7 @@ void CGAME::Animals_Load() {
 		horseList[iHorse].mX %= max_lane_size;
 	}
 	return;
-}
+}*/
 
 
 void CGAME::TrafficLight_Load(){
@@ -206,48 +251,69 @@ void CGAME::TrafficLight_Load(){
 		desRect.y = lanePixel[i] - 32;
 		SDL_RenderCopy(renderer, trafficlightTexture, &sourceRect, &desRect);
 	}
-	std::cout << "\n";
 	return;
 }
 
+int CGAME::CheckState() {
+	int pxl, pyl, pxr, pyr;
+	pxl = player.getmX() + 50;
+	pxr = player.getmX() - 50 + 110;
+	pyl = player.getmY() + 20;
+	pyr = player.getmY() - 20 + 110;
+	for (int iVe = 0; iVe < vehicleList.size(); iVe++) {
+		if (pxl >= vehicleList[iVe].mX && pxl <= vehicleList[iVe].mX + vehicleList[iVe].sX
+			&& pyl >= vehicleList[iVe].mY && pyl <= vehicleList[iVe].mY + vehicleList[iVe].sY) {
+			player.mState = 0;
+			//player = CPEOPLE();
+			return -1;
+		}
+		if (pxr >= vehicleList[iVe].mX && pxr <= vehicleList[iVe].mX + vehicleList[iVe].sX
+			&& pyr >= vehicleList[iVe].mY && pyr <= vehicleList[iVe].mY + vehicleList[iVe].sY) {
+			player.mState = 0;
+			//player = CPEOPLE();
+			return -1;
+		}
+		if (pxl >= vehicleList[iVe].mX && pxl <= vehicleList[iVe].mX + vehicleList[iVe].sX
+			&& pyr >= vehicleList[iVe].mY && pyr <= vehicleList[iVe].mY + vehicleList[iVe].sY) {
+			player.mState = 0;
+			//player = CPEOPLE();
+			return -1;
+		}
+		if (pxr >= vehicleList[iVe].mX && pxr <= vehicleList[iVe].mX + vehicleList[iVe].sX
+			&& pyl >= vehicleList[iVe].mY && pyl <= vehicleList[iVe].mY + vehicleList[iVe].sY) {
+			player.mState = 0;
+			//player = CPEOPLE();
+			return-1;
+		}
+	}
+	if (pyl < 0) {
+		return 1;
+	}
+	return 0;
+}
+
 void CGAME::drawGame(){
-	/*for (int i = vLane.size()-1; i >= 0; i--) {
-		for (int j = 0; j < 10; j++) {
-			GotoXY(0, 11 * (vLane.size() - i - 1) + j + 0);
-			std::cout << boardGame[i*10 + j];
-		}
-		GotoXY(0, 11 * (vLane.size() - i - 1) + 10);
-		std::cout << "LANE " << i+1 << " STATE: " << vLane[i].light.getState() << " TIME: " << vLane[i].light.getTime() << "\n";
-		vLane[i].light.CountDown();
-	}
-	for (int iCar = 0; iCar < carList.size(); iCar++) {
-		for (int i = 0; i < carList[iCar].sX; i++) {
-			for (int j = 0; j < carList[iCar].sY; j++) {
-				GotoXY((carList[iCar].mY + j) % max_lane_size, (vLane.size() - carList[iCar].mX - 1) * 11 + 6 + i);
-				std::cout << carList[iCar].dbox[i * carList[iCar].sY + j];
-			}
-		}
-		carList[iCar].move();
-	}
-	*/
-
-
 	SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-
+	std::cerr << "NEW GAME LEVEL" << level << "\n";
 	while (isRunning) {
 		SDL_RenderClear(renderer);
 		Background_Load();
 		Vehicle_Load();
 		TrafficLight_Load();
 		People_Load(player.flip + player.animation_flip);
-		CheckState();
+		int gameState = CheckState();
+		if (gameState != 0) {
+			isRunning = 0;
+			if (gameState < 0) {
+				level = 0;
+			}
+			else {
+				++level;
+			}
+		}
 		while (SDL_PollEvent(&mainEvent)) {
 			switch (mainEvent.type) {
 			case SDL_QUIT: {
-				isRunning = 0;
-				break;
-			}
-			case SDL_MOUSEBUTTONDOWN: {
 				isRunning = 0;
 				break;
 			}
@@ -255,6 +321,11 @@ void CGAME::drawGame(){
 				++player.animation_flip;
 				player.animation_flip %= 3;
 				switch (mainEvent.key.keysym.sym) {
+				case SDLK_ESCAPE: {
+					level = -1;
+					isRunning = 0;
+					break;
+				}
 				case SDLK_UP: {
 					player.up();
 					player.flip = 0;
@@ -276,7 +347,6 @@ void CGAME::drawGame(){
 					break;
 				}
 				default:
-					player.animation_flip = 0;
 					break;
 				}
 			}
@@ -288,42 +358,15 @@ void CGAME::drawGame(){
 		SDL_Delay(1000 / 60);
 		SDL_RenderPresent(renderer);
 	}
+
+}
+
+void CGAME::playGame(){
+	while (level != -1) {
+		Init();
+		drawGame();
+	}
 	SDL_DestroyWindow(window);
 	SDL_Quit();
 }
 
-void CGAME::CheckState(){
-	// 30 - 15
-	int pxl, pyl, pxr, pyr;
-	pxl = player.getmX() + 30;
-	pxr = player.getmX() - 30 + 80;
-	pyl = player.getmY() + 15;
-	pyr = player.getmY() - 15 + 80;
-	for (int iCar = 0; iCar < carList.size(); iCar++) {
-		if (pxl >= carList[iCar].mX && pxl <= carList[iCar].mX + carList[iCar].sX
-			&& pyl >= carList[iCar].mY && pyl <= carList[iCar].mY + carList[iCar].sY) {
-			//isRunning = 0;
-			player = CPEOPLE(0, 0);
-			return;
-		}
-		if (pxr >= carList[iCar].mX && pxr <= carList[iCar].mX + carList[iCar].sX
-			&& pyr >= carList[iCar].mY && pyr <= carList[iCar].mY + carList[iCar].sY) {
-			//isRunning = 0;
-			player = CPEOPLE(0, 0);
-			return;
-		}
-		if (pxl >= carList[iCar].mX && pxl <= carList[iCar].mX + carList[iCar].sX
-			&& pyr >= carList[iCar].mY && pyr <= carList[iCar].mY + carList[iCar].sY) {
-			//isRunning = 0;
-			player = CPEOPLE(0, 0);
-			return;
-		}
-		if (pxr >= carList[iCar].mX && pxr <= carList[iCar].mX + carList[iCar].sX
-			&& pyl >= carList[iCar].mY && pyl <= carList[iCar].mY + carList[iCar].sY) {
-			//isRunning = 0;
-			player = CPEOPLE(0, 0);
-			return;
-		}
-	}
-	std::cout << "ALIVE\n";
-}

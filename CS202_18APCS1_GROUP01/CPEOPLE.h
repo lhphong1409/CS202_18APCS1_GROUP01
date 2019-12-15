@@ -9,9 +9,9 @@ class CPEOPLE {
 private:
 	int mX, mY;	
 	int v;
-	bool mState;
 	std::vector<EFFECT> curEffect;
 public:
+	bool mState;
 	int flip = 0;
 	int animation_flip = 0;
 	CPEOPLE();
