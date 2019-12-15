@@ -45,6 +45,7 @@ SDL_Texture* CGAME::loadTexture(std::string path){
 	SDL_FreeSurface(loadedSurface);
 	return newTexture;
 }
+
 void CGAME::People_Load(const int animation){
 	// 80x80
 	int animateSize = 80;
@@ -123,6 +124,7 @@ void CGAME::People_Load(const int animation){
 	desRect.h = sourceRect.h = animateSize;
 	SDL_RenderCopy(renderer, peopleTexture, &sourceRect, &desRect);
 }
+
 void CGAME::Background_Load() {
 	SDL_Rect sourceRect, desRect;
 	SDL_QueryTexture(backgroundTexture, NULL, NULL, &sourceRect.w, &sourceRect.h);
@@ -132,6 +134,7 @@ void CGAME::Background_Load() {
 	SDL_RenderCopy(renderer, backgroundTexture, &sourceRect, &desRect);
 	return;
 }
+
 void CGAME::Vehicle_Load(){
 	SDL_Rect sourceRect, desRect;
 	SDL_QueryTexture(carTexture, NULL, NULL, &sourceRect.w, &sourceRect.h);
@@ -189,32 +192,10 @@ void CGAME::TrafficLight_Load(){
 		desRect.y = lanePixel[i] - 32;
 		SDL_RenderCopy(renderer, trafficlightTexture, &sourceRect, &desRect);
 	}
-	std::cout << "\n";
 	return;
 }
 
 void CGAME::drawGame(){
-	/*for (int i = vLane.size()-1; i >= 0; i--) {
-		for (int j = 0; j < 10; j++) {
-			GotoXY(0, 11 * (vLane.size() - i - 1) + j + 0);
-			std::cout << boardGame[i*10 + j];
-		}
-		GotoXY(0, 11 * (vLane.size() - i - 1) + 10);
-		std::cout << "LANE " << i+1 << " STATE: " << vLane[i].light.getState() << " TIME: " << vLane[i].light.getTime() << "\n";
-		vLane[i].light.CountDown();
-	}
-	for (int iCar = 0; iCar < carList.size(); iCar++) {
-		for (int i = 0; i < carList[iCar].sX; i++) {
-			for (int j = 0; j < carList[iCar].sY; j++) {
-				GotoXY((carList[iCar].mY + j) % max_lane_size, (vLane.size() - carList[iCar].mX - 1) * 11 + 6 + i);
-				std::cout << carList[iCar].dbox[i * carList[iCar].sY + j];
-			}
-		}
-		carList[iCar].move();
-	}
-	*/
-
-
 	SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
 
 	while (isRunning) {
@@ -276,7 +257,6 @@ void CGAME::drawGame(){
 }
 
 void CGAME::CheckState(){
-	// 30 - 15
 	int pxl, pyl, pxr, pyr;
 	pxl = player.getmX() + 30;
 	pxr = player.getmX() - 30 + 80;
