@@ -15,4 +15,7 @@
 
 #undef main()
 
+enum OBJECT { CAR, BUS, TRUCK, DINOSAUR, CROCODILE, HORSE };
+enum LIGHTst { RED, GREEN, YELLOW, OFF };
+
 #endif

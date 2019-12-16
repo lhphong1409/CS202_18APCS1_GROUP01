@@ -17,13 +17,13 @@ void CGAME::Init() {
 	vLane.clear();
 	player.updatePos(800, 790);
 	vehicleList.clear();
-	SetLane(0);
-	SetLane(1);
-	SetLane(2);
+	animalList.clear();
+	SetLane(0, 0);
+	SetLane(1, 1);
+	SetLane(2, 0);
 }
 
-void CGAME::SetLane(int laneID){
-	enum OBJECT { CAR, BUS, TRUCK, DINOSAUR, CROCODILE, HORSE };
+void CGAME::SetLane(int laneID, bool objectType){ // 0 : vehicle, 1 : animal
 	//lane format : pixel 100-200 400-500 700-800
 	vLane.push_back(laneType());
 	if (player.getEffect(REDLIGHT)) {
@@ -31,7 +31,7 @@ void CGAME::SetLane(int laneID){
 	}
 	int cur_pos = rand() % vehicle_dis;
 	while (cur_pos + vehicle_dis + vehicle_dis <= max_lane_size) {
-		OBJECT cur_type = static_cast<OBJECT>(rand() % (6));
+		OBJECT cur_type = static_cast<OBJECT>(rand() % (3) + 3 * objectType);
 		switch (cur_type) {
 		case OBJECT::CAR:
 			vehicleList.push_back(CCAR(cur_pos, lanePixel[laneID], laneID));
@@ -43,18 +43,22 @@ void CGAME::SetLane(int laneID){
 			vehicleList.push_back(CTRUCK(cur_pos, lanePixel[laneID], laneID));
 			break;
 		case OBJECT::DINOSAUR:
-			animalList.push_back(CDINOSAUR(cur_pos, lanePixel[laneID], laneID));
+			animalList.push_back(CDINOSAUR(cur_pos, -5 +lanePixel[laneID], laneID));
 			break;
 		case OBJECT::CROCODILE:
-			animalList.push_back(CCROCODILE(cur_pos, lanePixel[laneID], laneID));
+			animalList.push_back(CCROCODILE(cur_pos, (90-56) + lanePixel[laneID], laneID));
 			break;
 		case OBJECT::HORSE:
-			animalList.push_back(CHORSE(cur_pos, lanePixel[laneID], laneID));
+			animalList.push_back(CHORSE(cur_pos, -5 + lanePixel[laneID], laneID));
 			break;
 		default:
 			break;
 		}
-		cur_pos += vehicleList.back().sX + rand() % vehicle_dis + vehicle_dis;
+		if(!objectType)
+			cur_pos += vehicleList.back().sX + rand() % vehicle_dis + vehicle_dis;
+		else {
+			cur_pos += animalList.back().sX + rand() % animal_dis + animal_dis;
+		}
 		//std::cout << vehicleList.back().type << "\n";
 	}
 	return;
@@ -207,13 +211,13 @@ void CGAME::Vehicle_Load(){
 	SDL_Texture *curTexture;
 	for (int iVe = 0; iVe < vehicleList.size(); iVe++) {
 		switch (vehicleList[iVe].type){
-		case CARTYPE::BUS:
+		case OBJECT::BUS:
 			curTexture = busTexture;
 			break;
-		case CARTYPE::TRUCK:
+		case OBJECT::TRUCK:
 			curTexture = truckTexture;
 			break;
-		case CARTYPE::CAR:
+		case OBJECT::CAR:
 			curTexture = carTexture;
 			break;
 
@@ -234,18 +238,19 @@ void CGAME::Vehicle_Load(){
 	}
 	return;
 }
+
 void CGAME::Animals_Load() {
 	SDL_Rect sourceRect, desRect;
 	SDL_Texture* curTexture;
 	for (int iAni = 0; iAni < animalList.size(); iAni++) {
 		switch (animalList[iAni].type) {
-		case ANIMALS::DINOSAUR:
+		case OBJECT::DINOSAUR:
 			curTexture = dinosaurTexture[animalList[iAni].anima];
 			break;
-		case ANIMALS::CROCODILE: 
+		case OBJECT::CROCODILE: 
 			curTexture = crocodileTexture[animalList[iAni].anima];
 			break;
-		case ANIMALS::HORSE:
+		case OBJECT::HORSE:
 			curTexture = horseTexture[animalList[iAni].anima];
 			break;
 
@@ -260,8 +265,13 @@ void CGAME::Animals_Load() {
 		desRect.x = animalList[iAni].mX;
 		desRect.y = animalList[iAni].mY;
 		SDL_RenderCopy(renderer, curTexture, &sourceRect, &desRect);
-		animalList[iAni].setV((level / 3 + animalList[iAni].default_v) * (vLane[animalList[iAni].lane].light.getState() != RED) / (1 + player.getEffect(SLOW)));
+		animalList[iAni].setV((level / 3 + animalList[iAni].default_v) / (1 + player.getEffect(SLOW)));
 		animalList[iAni].move();
+		std::cerr << "anima : " << animalList[iAni].anima << " frame:" << frame << "\n";
+		if (frame % (FPS / 6) == 0) {
+			++animalList[iAni].anima;
+			animalList[iAni].anima %= 4;
+		}
 		animalList[iAni].mX %= max_lane_size;
 	}
 	return;
@@ -347,6 +357,31 @@ int CGAME::CheckState() {
 			break;
 		}
 	}
+	for (int iVe = 0; iVe < animalList.size(); iVe++) {
+		if (pxl >= animalList[iVe].mX && pxl <= animalList[iVe].mX + animalList[iVe].sX
+			&& pyl >= animalList[iVe].mY && pyl <= animalList[iVe].mY + animalList[iVe].sY) {
+			live = 0;
+			break;
+		}
+		if (pxr >= animalList[iVe].mX && pxr <= animalList[iVe].mX + animalList[iVe].sX
+			&& pyr >= animalList[iVe].mY && pyr <= animalList[iVe].mY + animalList[iVe].sY) {
+			player.mState = 0;
+			live = 0;
+			break;
+		}
+		if (pxl >= animalList[iVe].mX && pxl <= animalList[iVe].mX + animalList[iVe].sX
+			&& pyr >= animalList[iVe].mY && pyr <= animalList[iVe].mY + animalList[iVe].sY) {
+			player.mState = 0;
+			live = 0;
+			break;
+		}
+		if (pxr >= animalList[iVe].mX && pxr <= animalList[iVe].mX + animalList[iVe].sX
+			&& pyl >= animalList[iVe].mY && pyl <= animalList[iVe].mY + animalList[iVe].sY) {
+			player.mState = 0;
+			live = 0;
+			break;
+		}
+	}
 	if (pyl < 0) {
 		player.changeEffect(REDLIGHT, 0);
 		return 1;
@@ -358,7 +393,7 @@ int CGAME::CheckState() {
 		return -1;
 	}
 	return 0;
-}
+} // need to update
 
 void CGAME::drawGame(){
 	std::cerr << "NEW GAME LEVEL" << level << " " << player.getEffect(SHIELD) << "\n";
@@ -369,6 +404,7 @@ void CGAME::drawGame(){
 		SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
 		Background_Load();
 		Vehicle_Load();
+		Animals_Load();
 		TrafficLight_Load();
 		People_Load(player.flip + player.animation_flip);
 		int gameState = CheckState();

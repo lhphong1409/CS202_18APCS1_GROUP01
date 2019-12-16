@@ -2,7 +2,6 @@
 #define _CTRAFFICLIGHT_H
 #include "TEMPLATE.h"
 
-enum LIGHTst { RED, GREEN, YELLOW, OFF };
 
 class CTRAFFICLIGHT {
 private:

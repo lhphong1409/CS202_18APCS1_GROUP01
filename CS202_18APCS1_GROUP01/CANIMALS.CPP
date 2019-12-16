@@ -19,7 +19,6 @@ void CANIMALS::setLane(const int value) {
 
 void CANIMALS::move() {
 	mX += v;
-	anima = (anima + 1) / 4;
 	return;
 }
 

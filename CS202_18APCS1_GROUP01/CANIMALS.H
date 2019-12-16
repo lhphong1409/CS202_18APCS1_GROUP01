@@ -1,7 +1,6 @@
 #ifndef _ANIMALS_H
 #define _ANIMALS_H
 #include "PATH.h"
-enum ANIMALS{DINOSAUR, CROCODILE, HORSE };
 class CANIMALS {
 public:
 	CANIMALS(int x, int y, int l);
@@ -10,7 +9,7 @@ public:
 	int lane;
 	int anima;
 	bool state;
-	enum ANIMALS type;
+	enum OBJECT type;
 	virtual void setV(const int value);
 	virtual void setLane(const int value);
 	virtual void move();

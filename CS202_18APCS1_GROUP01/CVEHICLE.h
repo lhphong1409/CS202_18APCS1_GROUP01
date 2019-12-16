@@ -3,7 +3,6 @@
 
 #include "PATH.h"
 
-enum CARTYPE{CAR, TRUCK, BUS};
 class CVEHICLE {
 public:
 	CVEHICLE(int x, int y, int l);
@@ -11,7 +10,7 @@ public:
 	int v, default_v; // velocity 
 	int lane;
 	bool state;
-	enum CARTYPE type;
+	enum OBJECT type;
 	virtual void setV(const int value);
 	virtual void setLane(const int value);
 	virtual void move();

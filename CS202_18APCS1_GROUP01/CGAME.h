@@ -38,7 +38,7 @@ private:
 public:
 	CGAME();
 	void Init();
-	void SetLane(int laneID);
+	void SetLane(int laneID, bool objectType);
 	SDL_Texture* loadTexture(std::string path);
 	void TextureLoad();
 	void Menu_Load(int curChoice);
