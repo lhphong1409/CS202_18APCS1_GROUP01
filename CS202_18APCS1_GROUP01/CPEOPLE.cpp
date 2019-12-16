@@ -7,15 +7,33 @@ CPEOPLE::CPEOPLE(){
 	mY = 790;
 }
 
-CPEOPLE::CPEOPLE(int x, int y){
-	mX = x;
-	mY = y;
-	v = 20;
-	mState = 1;
-}
-
 int CPEOPLE::getV() {
 	return v;
+}
+
+int CPEOPLE::getEffect(EFFECT idEffect){
+	return (effectState[idEffect] > 0);
+}
+
+void CPEOPLE::updatePos(int x, int y){
+	mX = x;
+	mY = y;
+}
+
+void CPEOPLE::changeEffect(EFFECT idEffect,  int time){
+	effectState[idEffect] = time;
+	return;
+}
+
+void CPEOPLE::countdownEffect(){
+	--effectState[0];
+	effectState[0] = max(0, effectState[0]);
+	--effectState[1];
+	effectState[1] = max(0, effectState[1]);
+	--effectState[2];
+	effectState[2] = max(0, effectState[2]);
+
+	return;
 }
 
 int CPEOPLE::getmX(){

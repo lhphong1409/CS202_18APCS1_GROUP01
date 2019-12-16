@@ -18,7 +18,7 @@ private:
 	int max_lane_size = 1500;
 	int vehicle_dis = 150;
 	int animal_dis = 150;
-	int FPS = 60;
+	int FPS = 60, frame = 0;
 	int score = 0, level = 1;
 	SDL_Window *window = NULL;
 	SDL_Renderer *renderer = NULL;
@@ -33,6 +33,7 @@ private:
 	SDL_Texture *peopleTexture = NULL;
 	SDL_Texture *trafficlightTexture = NULL;
 	SDL_Texture *menuTexture[4];
+	SDL_Texture *numberTexture[10];
 	bool isRunning = 1;
 public:
 	CGAME();

@@ -15,13 +15,9 @@ CGAME::CGAME(){
 
 void CGAME::Init() {
 	isRunning = 1;
-	player = CPEOPLE();
 	vLane.clear();
+	player.updatePos(800, 790);
 	vehicleList.clear();
-	for (int i = 0; i < nLane; i++) {
-		laneType cur_laneType; // OFF-RED-YELLOW-GREEN
-		vLane.push_back(cur_laneType);
-	}
 	SetLane(0);
 	SetLane(1);
 	SetLane(2);
@@ -29,6 +25,10 @@ void CGAME::Init() {
 
 void CGAME::SetLane(int laneID){
 	//lane format : pixel 100-200 400-500 700-800
+	vLane.push_back(laneType());
+	if (player.getEffect(REDLIGHT)) {
+		vLane[vLane.size() - 1] = laneType(RED);
+	}
 	int cur_pos = rand() % vehicle_dis;
 	while (cur_pos + vehicle_dis + vehicle_dis <= max_lane_size) {
 		CARTYPE cur_type = static_cast<CARTYPE>(rand() % (3));
@@ -79,6 +79,11 @@ void CGAME::TextureLoad(){
 
 	peopleTexture = loadTexture(image_people);
 	trafficlightTexture = loadTexture(image_trafficlight);
+
+	for (int i = 0; i < 9; i++) {
+		numberTexture[i] = loadTexture(image_number[i]);
+	}
+	return;
 }
 
 void CGAME::Menu_Load(int curChoice) {
@@ -92,6 +97,9 @@ void CGAME::Menu_Load(int curChoice) {
 
 void CGAME::People_Load(const int animation){
 	// 80x80
+	if (frame == 0) {
+		player.countdownEffect();
+	}
 	SDL_Rect sourceRect, desRect;
 	SDL_QueryTexture(peopleTexture, NULL, NULL, &sourceRect.w, &sourceRect.h);
 	switch (animation){
@@ -176,6 +184,7 @@ void CGAME::Background_Load() {
 	desRect.w = sourceRect.w;
 	desRect.h = sourceRect.h;
 	SDL_RenderCopy(renderer, backgroundTexture[level%3], &sourceRect, &desRect);
+
 	return;
 }
 
@@ -205,7 +214,7 @@ void CGAME::Vehicle_Load(){
 		desRect.x = vehicleList[iVe].mX;
 		desRect.y = vehicleList[iVe].mY;
 		SDL_RenderCopy(renderer, curTexture, &sourceRect, &desRect);
-		vehicleList[iVe].setV((level / 3 + vehicleList[iVe].default_v) * (vLane[vehicleList[iVe].lane].light.getState() != RED));
+		vehicleList[iVe].setV((level / 3 + vehicleList[iVe].default_v) * (vLane[vehicleList[iVe].lane].light.getState() != RED) / (1 + player.getEffect(SLOW)));
 		vehicleList[iVe].move();
 		vehicleList[iVe].mX %= max_lane_size;
 	}
@@ -243,19 +252,24 @@ void CGAME::TrafficLight_Load(){
 		default:
 			break;
 		}
-		vLane[i].light.incFrame();
-		if (vLane[i].light.getFrame() == 0) {
+		if (frame == 0) {
 			vLane[i].light.CountDown();
 		}
 		desRect.w = desRect.h = 32;
 		desRect.x = 0;
 		desRect.y = lanePixel[i] - 32;
 		SDL_RenderCopy(renderer, trafficlightTexture, &sourceRect, &desRect);
+		if (vLane[i].light.getState() == OFF)
+			continue;
+		desRect.x = 32;
+		sourceRect.x = sourceRect.y = 0;
+		SDL_RenderCopy(renderer, numberTexture[vLane[i].light.getTime()], &sourceRect, &desRect);
 	}
 	return;
 }
 
 int CGAME::CheckState() {
+	bool live = 1;
 	int pxl, pyl, pxr, pyr;
 	pxl = player.getmX() + 50;
 	pxr = player.getmX() - 50 + 110;
@@ -264,38 +278,46 @@ int CGAME::CheckState() {
 	for (int iVe = 0; iVe < vehicleList.size(); iVe++) {
 		if (pxl >= vehicleList[iVe].mX && pxl <= vehicleList[iVe].mX + vehicleList[iVe].sX
 			&& pyl >= vehicleList[iVe].mY && pyl <= vehicleList[iVe].mY + vehicleList[iVe].sY) {
-			player.mState = 0;
-			//player = CPEOPLE();
-			return -1;
+			live = 0;
+			break;
 		}
 		if (pxr >= vehicleList[iVe].mX && pxr <= vehicleList[iVe].mX + vehicleList[iVe].sX
 			&& pyr >= vehicleList[iVe].mY && pyr <= vehicleList[iVe].mY + vehicleList[iVe].sY) {
 			player.mState = 0;
-			//player = CPEOPLE();
-			return -1;
+			live = 0;
+			break;
 		}
 		if (pxl >= vehicleList[iVe].mX && pxl <= vehicleList[iVe].mX + vehicleList[iVe].sX
 			&& pyr >= vehicleList[iVe].mY && pyr <= vehicleList[iVe].mY + vehicleList[iVe].sY) {
 			player.mState = 0;
-			//player = CPEOPLE();
-			return -1;
+			live = 0;
+			break;
 		}
 		if (pxr >= vehicleList[iVe].mX && pxr <= vehicleList[iVe].mX + vehicleList[iVe].sX
 			&& pyl >= vehicleList[iVe].mY && pyl <= vehicleList[iVe].mY + vehicleList[iVe].sY) {
 			player.mState = 0;
-			//player = CPEOPLE();
-			return-1;
+			live = 0;
+			break;
 		}
 	}
 	if (pyl < 0) {
+		player.changeEffect(REDLIGHT, 0);
 		return 1;
+	}
+	if (!live) {
+		if (player.getEffect(SHIELD)) {
+			return 0;
+		}
+		return -1;
 	}
 	return 0;
 }
 
 void CGAME::drawGame(){
-	std::cerr << "NEW GAME LEVEL" << level << "\n";
+	std::cerr << "NEW GAME LEVEL" << level << " " << player.getEffect(SHIELD) << "\n";
 	while (isRunning) {
+		++frame;
+		frame %= FPS;
 		SDL_RenderClear(renderer);
 		SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
 		Background_Load();
@@ -356,7 +378,7 @@ void CGAME::drawGame(){
 			}
 			}
 		}
-		SDL_Delay(1000 / 60);
+		SDL_Delay(1000 / FPS);
 		SDL_RenderPresent(renderer);
 	}
 
