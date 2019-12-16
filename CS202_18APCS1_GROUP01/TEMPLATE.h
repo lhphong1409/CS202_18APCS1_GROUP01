@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <conio.h>
+#include <Mmsystem.h>
 #include "SDL.h"
 #include "SDL_ttf.h"
 

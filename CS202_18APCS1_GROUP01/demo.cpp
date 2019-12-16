@@ -1,3 +1,4 @@
+#include"TEMPLATE.h"
 #include "CGAME.h"
 
 
@@ -9,6 +10,7 @@
 
 
 void testIngame() {
+	PlaySound("musicgame.wav", GetModuleHandle(NULL), SND_FILENAME | SND_ASYNC | SND_LOOP);
 	CGAME game;
 	game.playGame();
 }
