@@ -8,11 +8,14 @@
 #include "CONFIG.h"
 #include "PATH.h"
 #include "CPEOPLE.h"
+#include "CEFFECT.h"
+
 class CGAME {
 private:
 	std::vector<laneType> vLane;
 	std::vector<CVEHICLE> vehicleList;
 	std::vector<CANIMALS> animalList;
+	std::vector<CEFFECT> effectList;
 	CPEOPLE player;
 	int nLane = 3; // default;
 	int max_lane_size = 1500;
@@ -29,11 +32,13 @@ private:
 	SDL_Texture* dinosaurTexture[4];
 	SDL_Texture* crocodileTexture[4];
 	SDL_Texture* horseTexture[4];
+	SDL_Texture* effectTexture[3];
 	SDL_Texture *backgroundTexture[3];
 	SDL_Texture *peopleTexture = NULL;
 	SDL_Texture *trafficlightTexture = NULL;
 	SDL_Texture *menuTexture[4];
 	SDL_Texture *numberTexture[10];
+
 	bool isRunning = 1;
 public:
 	CGAME();
@@ -44,6 +49,7 @@ public:
 	void Menu_Load(int curChoice);
 	void People_Load(const int animation);
 	void Background_Load();
+	void Effect_Load();
 	void Vehicle_Load();
 	void Animals_Load();
 	void TrafficLight_Load();

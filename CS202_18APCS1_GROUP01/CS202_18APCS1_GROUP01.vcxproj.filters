@@ -42,6 +42,9 @@
     <ClCompile Include="CANIMALS.CPP">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CEFFECT.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CGAME.h">
@@ -69,6 +72,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CANIMALS.H">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CEFFECT.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

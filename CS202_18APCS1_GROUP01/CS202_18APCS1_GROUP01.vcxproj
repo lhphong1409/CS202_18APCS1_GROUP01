@@ -125,6 +125,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CANIMALS.CPP" />
+    <ClCompile Include="CEFFECT.cpp" />
     <ClCompile Include="CGAME.cpp" />
     <ClCompile Include="CONFIG.cpp" />
     <ClCompile Include="CPEOPLE.cpp" />
@@ -136,6 +137,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CANIMALS.H" />
+    <ClInclude Include="CEFFECT.h" />
     <ClInclude Include="CGAME.h" />
     <ClInclude Include="CONFIG.h" />
     <ClInclude Include="CPEOPLE.h" />

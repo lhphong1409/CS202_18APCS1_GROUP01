@@ -3,8 +3,6 @@
 
 #include "TEMPLATE.h"
 
-enum EFFECT { SLOW, SHIELD, REDLIGHT};
-
 class CPEOPLE {
 private:
 	int mX, mY;	

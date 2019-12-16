@@ -16,8 +16,12 @@ void CGAME::Init() {
 	isRunning = 1;
 	vLane.clear();
 	player.updatePos(800, 790);
+	//player.changeEffect(SHIELD, 0);
+	//player.changeEffect(SLOW, 0);
+	player.changeEffect(REDLIGHT, 0);
 	vehicleList.clear();
 	animalList.clear();
+	effectList.clear();
 	SetLane(0, 0);
 	SetLane(1, 1);
 	SetLane(2, 0);
@@ -26,9 +30,6 @@ void CGAME::Init() {
 void CGAME::SetLane(int laneID, bool objectType){ // 0 : vehicle, 1 : animal
 	//lane format : pixel 100-200 400-500 700-800
 	vLane.push_back(laneType());
-	if (player.getEffect(REDLIGHT)) {
-		vLane[vLane.size() - 1] = laneType(RED);
-	}
 	int cur_pos = rand() % vehicle_dis;
 	while (cur_pos + vehicle_dis + vehicle_dis <= max_lane_size) {
 		OBJECT cur_type = static_cast<OBJECT>(rand() % (3) + 3 * objectType);
@@ -61,6 +62,11 @@ void CGAME::SetLane(int laneID, bool objectType){ // 0 : vehicle, 1 : animal
 		}
 		//std::cout << vehicleList.back().type << "\n";
 	}
+
+	bool spawnEffect = (rand() % 100) < 25;
+	if (spawnEffect) {
+		effectList.push_back(CEFFECT(rand() % 1500 + 10, lanePixel[laneID], laneID));
+	}
 	return;
 }
 
@@ -76,7 +82,7 @@ SDL_Texture* CGAME::loadTexture(std::string path){
 	return newTexture;
 }
 
-void CGAME::TextureLoad(){
+void CGAME::TextureLoad() {
 	carTexture = loadTexture(image_vehicle_car);
 	busTexture = loadTexture(image_vehicle_bus);
 	truckTexture = loadTexture(image_vehicle_truck);
@@ -100,6 +106,10 @@ void CGAME::TextureLoad(){
 		dinosaurTexture[i] = loadTexture(image_animals_dinosaur[i]);
 		crocodileTexture[i] = loadTexture(image_animals_crocodile[i]);
 		horseTexture[i] = loadTexture(image_animals_horse[i]);
+	}
+
+	for (int i = 0; i < 3; i++) {
+		effectTexture[i] = loadTexture(image_effect[i]);
 	}
 	return;
 }
@@ -206,6 +216,35 @@ void CGAME::Background_Load() {
 	return;
 }
 
+void CGAME::Effect_Load() {
+	SDL_Rect sourceRect, desRect;
+	sourceRect.x = sourceRect.y = 0;
+	desRect.w = sourceRect.w = 80;
+	desRect.h = sourceRect.h = 80;
+	for (int i = 0; i < effectList.size(); i++) {
+		desRect.x = effectList[i].mX;
+		desRect.y = effectList[i].mY;
+		if (frame % (FPS / 6) == 0) { // EFFECT ANIMATION
+			effectList[i].mY += 4;
+			if (effectList[i].mY > lanePixel[effectList[i].lane] + 20) {
+				effectList[i].mY = lanePixel[effectList[i].lane];
+			}
+		}
+		SDL_RenderCopy(renderer, effectTexture[effectList[i].type], &sourceRect, &desRect);
+	}
+	desRect.x = player.getmX()+15;
+	desRect.y = player.getmY()+15;
+
+	if (player.getEffect(SHIELD)) {
+		std::wcerr<<"SHIELD: "  << desRect.x << " " << desRect.y << "\n";
+		SDL_RenderCopy(renderer, effectTexture[EFFECT::SHIELD], &sourceRect, &desRect);
+	}
+	if (player.getEffect(SLOW)) {
+		std::wcerr <<"SLOW "<< desRect.x << " " << desRect.y << "\n";
+		SDL_RenderCopy(renderer, effectTexture[EFFECT::SLOW], &sourceRect, &desRect);
+	}
+}
+
 void CGAME::Vehicle_Load(){
 	SDL_Rect sourceRect, desRect;
 	SDL_Texture *curTexture;
@@ -267,7 +306,7 @@ void CGAME::Animals_Load() {
 		SDL_RenderCopy(renderer, curTexture, &sourceRect, &desRect);
 		animalList[iAni].setV((level / 3 + animalList[iAni].default_v) / (1 + player.getEffect(SLOW)));
 		animalList[iAni].move();
-		std::cerr << "anima : " << animalList[iAni].anima << " frame:" << frame << "\n";
+		//std::cerr << "anima : " << animalList[iAni].anima << " frame:" << frame << "\n";
 		if (frame % (FPS / 6) == 0) {
 			++animalList[iAni].anima;
 			animalList[iAni].anima %= 4;
@@ -382,12 +421,45 @@ int CGAME::CheckState() {
 			break;
 		}
 	}
+	if(effectList.size() > 0)	
+		for (int iEff = effectList.size() - 1; iEff >= 0; iEff--) {
+			if (pxl >= effectList[iEff].mX && pxl <= effectList[iEff].mX + effectList[iEff].sX
+				&& pyl >= effectList[iEff].mY && pyl <= effectList[iEff].mY + effectList[iEff].sY) {
+				player.changeEffect(effectList[iEff].type, 10);
+				effectList.erase(effectList.begin() + iEff);
+				break;
+			}
+			if (pxr >= effectList[iEff].mX && pxr <= effectList[iEff].mX + effectList[iEff].sX
+				&& pyr >= effectList[iEff].mY && pyr <= effectList[iEff].mY + effectList[iEff].sY) {
+				player.changeEffect(effectList[iEff].type, 10);
+				effectList.erase(effectList.begin() + iEff);
+				break;
+			}
+			if (pxl >= effectList[iEff].mX && pxl <= effectList[iEff].mX + effectList[iEff].sX
+				&& pyr >= effectList[iEff].mY && pyr <= effectList[iEff].mY + effectList[iEff].sY) {
+				player.changeEffect(effectList[iEff].type, 10);
+				effectList.erase(effectList.begin() + iEff);
+				break;
+			}
+			if (pxr >= effectList[iEff].mX && pxr <= effectList[iEff].mX + effectList[iEff].sX
+				&& pyl >= effectList[iEff].mY && pyl <= effectList[iEff].mY + effectList[iEff].sY) {
+				player.changeEffect(effectList[iEff].type, 10);
+				effectList.erase(effectList.begin() + iEff);
+				break;
+			}
+		}
+	if (player.getEffect(REDLIGHT)) {
+		for (int i = 0; i < nLane; i++)
+			vLane[i] = laneType(RED);
+		player.changeEffect(REDLIGHT, 0);
+	}
 	if (pyl < 0) {
 		player.changeEffect(REDLIGHT, 0);
 		return 1;
 	}
 	if (!live) {
 		if (player.getEffect(SHIELD)) {
+			player.changeEffect(SHIELD, 2);
 			return 0;
 		}
 		return -1;
@@ -396,17 +468,22 @@ int CGAME::CheckState() {
 } // need to update
 
 void CGAME::drawGame(){
-	std::cerr << "NEW GAME LEVEL" << level << " " << player.getEffect(SHIELD) << "\n";
+	std::cerr << "NEW GAME LEVEL" << level << " " << effectList.size() << "\n";
 	while (isRunning) {
+		std::cerr << player.getEffect(EFFECT::SHIELD) << " ";
+		std::cerr << "\n";
 		++frame;
 		frame %= FPS;
 		SDL_RenderClear(renderer);
 		SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
 		Background_Load();
+		People_Load(player.flip + player.animation_flip);
+		Effect_Load();
 		Vehicle_Load();
 		Animals_Load();
 		TrafficLight_Load();
-		People_Load(player.flip + player.animation_flip);
+
+
 		int gameState = CheckState();
 		if (gameState != 0) {
 			isRunning = 0;

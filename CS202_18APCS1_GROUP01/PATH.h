@@ -49,6 +49,11 @@ const std::string image_animals_horse[4] =
 "image/animals/horse/horse4.bmp", 
 };
 
+const std::string image_effect[3] =
+{ "image/effect/slow2.bmp",
+"image/effect/shield.bmp",
+"image/effect/redlight.bmp",
+};
 const std::string image_people = "image/player/player1.bmp";
 const std::string image_trafficlight = "image/trafficLight/tflight.bmp";
 #endif 
