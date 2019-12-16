@@ -1,0 +1,5 @@
+Size(pixel): 
+- horse1: 98x96
+- horse2: 99x89
+- horse3: 99x90
+- horse4: 98x90

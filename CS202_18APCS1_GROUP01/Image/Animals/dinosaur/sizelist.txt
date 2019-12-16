@@ -1,0 +1,5 @@
+Size(pixel):
+- dinosaur1: 79x96
+- dinosaur2: 78x99
+- dinosaur3: 79x96
+- dinosaur4: 79x99

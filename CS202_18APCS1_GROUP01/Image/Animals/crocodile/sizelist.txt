@@ -1,0 +1,5 @@
+Size(pixel):
+- crocodile1: 214x56
+- crocodile2: 212x56
+- crocodile3: 214x56
+- crocodile4: 214x56
