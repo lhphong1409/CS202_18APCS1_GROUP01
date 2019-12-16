@@ -26,12 +26,29 @@ const std::string image_number[10] =
 "image/trafficlight/number8.bmp",
 "image/trafficlight/number9.bmp",
 };
+
 const std::string image_vehicle_car = "image/vehicle/car/car.bmp";
 const std::string image_vehicle_truck = "image/vehicle/truck/truck.bmp";
 const std::string image_vehicle_bus = "image/vehicle/bus/bus.bmp";
-const std::string image_animals_dinosaur = "image/animals/dinosaur/dinosaur.bmp";
-const std::string image_animals_crocodile = "image/animals/dinosaur/crocodile.bmp";
-const std::string image_animals_horse = "image/animals/dinosaur/horse.bmp";
+
+const std::string image_animals_dinosaur[4] = 
+{"image/animals/dinosaur/dinosaur1.bmp",
+"image/animals/dinosaur/dinosaur2.bmp",
+"image/animals/dinosaur/dinosaur3.bmp",
+"image/animals/dinosaur/dinosaur4.bmp"};
+const std::string image_animals_crocodile[4] = 
+{"image/animals/crocodile/crocodile1.bmp",
+"image/animals/crocodile/crocodile2.bmp",
+"image/animals/crocodile/crocodile3.bmp",
+"image/animals/crocodile/crocodile4.bmp",
+};
+const std::string image_animals_horse[4] = 
+{ "image/animals/horse/horse1.bmp", 
+"image/animals/horse/horse2.bmp", 
+"image/animals/horse/horse3.bmp", 
+"image/animals/horse/horse4.bmp", 
+};
+
 const std::string image_people = "image/player/player1.bmp";
 const std::string image_trafficlight = "image/trafficLight/tflight.bmp";
 #endif 

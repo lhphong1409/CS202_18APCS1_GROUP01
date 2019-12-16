@@ -1,5 +1,4 @@
 #include "CGAME.h"
-
 CGAME::CGAME(){
 	srand(time(NULL));
 	SDL_Init(SDL_INIT_EVERYTHING);
@@ -24,6 +23,7 @@ void CGAME::Init() {
 }
 
 void CGAME::SetLane(int laneID){
+	enum OBJECT { CAR, BUS, TRUCK, DINOSAUR, CROCODILE, HORSE };
 	//lane format : pixel 100-200 400-500 700-800
 	vLane.push_back(laneType());
 	if (player.getEffect(REDLIGHT)) {
@@ -31,16 +31,25 @@ void CGAME::SetLane(int laneID){
 	}
 	int cur_pos = rand() % vehicle_dis;
 	while (cur_pos + vehicle_dis + vehicle_dis <= max_lane_size) {
-		CARTYPE cur_type = static_cast<CARTYPE>(rand() % (3));
+		OBJECT cur_type = static_cast<OBJECT>(rand() % (6));
 		switch (cur_type) {
-		case CARTYPE::CAR:
+		case OBJECT::CAR:
 			vehicleList.push_back(CCAR(cur_pos, lanePixel[laneID], laneID));
 			break;
-		case CARTYPE::BUS:
+		case OBJECT::BUS:
 			vehicleList.push_back(CBUS(cur_pos, lanePixel[laneID], laneID));
 			break;
-		case CARTYPE::TRUCK:
+		case OBJECT::TRUCK:
 			vehicleList.push_back(CTRUCK(cur_pos, lanePixel[laneID], laneID));
+			break;
+		case OBJECT::DINOSAUR:
+			animalList.push_back(CDINOSAUR(cur_pos, lanePixel[laneID], laneID));
+			break;
+		case OBJECT::CROCODILE:
+			animalList.push_back(CCROCODILE(cur_pos, lanePixel[laneID], laneID));
+			break;
+		case OBJECT::HORSE:
+			animalList.push_back(CHORSE(cur_pos, lanePixel[laneID], laneID));
 			break;
 		default:
 			break;
@@ -82,6 +91,11 @@ void CGAME::TextureLoad(){
 
 	for (int i = 0; i < 9; i++) {
 		numberTexture[i] = loadTexture(image_number[i]);
+	}
+	for (int i = 0; i < 4; i++) {
+		dinosaurTexture[i] = loadTexture(image_animals_dinosaur[i]);
+		crocodileTexture[i] = loadTexture(image_animals_crocodile[i]);
+		horseTexture[i] = loadTexture(image_animals_horse[i]);
 	}
 	return;
 }
@@ -220,6 +234,39 @@ void CGAME::Vehicle_Load(){
 	}
 	return;
 }
+void CGAME::Animals_Load() {
+	SDL_Rect sourceRect, desRect;
+	SDL_Texture* curTexture;
+	for (int iAni = 0; iAni < animalList.size(); iAni++) {
+		switch (animalList[iAni].type) {
+		case ANIMALS::DINOSAUR:
+			curTexture = dinosaurTexture[animalList[iAni].anima];
+			break;
+		case ANIMALS::CROCODILE: 
+			curTexture = crocodileTexture[animalList[iAni].anima];
+			break;
+		case ANIMALS::HORSE:
+			curTexture = horseTexture[animalList[iAni].anima];
+			break;
+
+		default:
+			curTexture = dinosaurTexture[animalList[iAni].anima];
+			break;
+		}
+		SDL_QueryTexture(curTexture, NULL, NULL, &sourceRect.w, &sourceRect.h);
+		sourceRect.x = sourceRect.y = 0;
+		desRect.w = sourceRect.w;
+		desRect.h = sourceRect.h;
+		desRect.x = animalList[iAni].mX;
+		desRect.y = animalList[iAni].mY;
+		SDL_RenderCopy(renderer, curTexture, &sourceRect, &desRect);
+		animalList[iAni].setV((level / 3 + animalList[iAni].default_v) * (vLane[animalList[iAni].lane].light.getState() != RED) / (1 + player.getEffect(SLOW)));
+		animalList[iAni].move();
+		animalList[iAni].mX %= max_lane_size;
+	}
+	return;
+}
+
 
 void CGAME::TrafficLight_Load(){
 	//lane format : pixel 100-200 400-500 700-800

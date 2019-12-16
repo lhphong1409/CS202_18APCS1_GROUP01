@@ -4,7 +4,6 @@
 #include "PATH.h"
 
 enum CARTYPE{CAR, TRUCK, BUS};
-
 class CVEHICLE {
 public:
 	CVEHICLE(int x, int y, int l);

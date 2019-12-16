@@ -1,5 +1,13 @@
 #include "CANIMALS.h"
 
+CANIMALS::CANIMALS(int x, int y, int l) {
+	mX = x;
+	mY = y;
+	lane = l;
+	anima = 0;
+	return;
+}
+
 void CANIMALS::setV(const int value) {
 	v = value;
 	return;
@@ -11,37 +19,10 @@ void CANIMALS::setLane(const int value) {
 
 void CANIMALS::move() {
 	mX += v;
+	anima = (anima + 1) / 4;
 	return;
 }
 
 void CANIMALS::tell() {
 	return;
-}
-
-CDINOSAUR::CDINOSAUR(int x, int y) {
-	mX = x;
-	mY = y;
-	sX = 224;
-	sY = 95;
-	state = 0;
-	v = default_v = 4;
-	lane = 0;
-}
-CCROCODILE::CCROCODILE(int x, int y) {
-	mX = x;
-	mY = y;
-	sX = 224;
-	sY = 95;
-	state = 0;
-	v = default_v = 4;
-	lane = 0;
-}
-CHORSE::CHORSE(int x, int y) {
-	mX = x;
-	mY = y;
-	sX = 224;
-	sY = 95;
-	state = 0;
-	v = default_v = 4;
-	lane = 0;
 }

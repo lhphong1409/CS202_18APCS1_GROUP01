@@ -26,9 +26,9 @@ private:
 	SDL_Texture *carTexture = NULL;
 	SDL_Texture* truckTexture = NULL;
 	SDL_Texture* busTexture = NULL;
-	SDL_Texture* dinosaurTexture = NULL;
-	SDL_Texture* crocodileTexture = NULL;
-	SDL_Texture* horseTexture = NULL;
+	SDL_Texture* dinosaurTexture[4];
+	SDL_Texture* crocodileTexture[4];
+	SDL_Texture* horseTexture[4];
 	SDL_Texture *backgroundTexture[3];
 	SDL_Texture *peopleTexture = NULL;
 	SDL_Texture *trafficlightTexture = NULL;
