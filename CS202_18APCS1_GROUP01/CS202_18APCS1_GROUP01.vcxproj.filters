@@ -45,6 +45,9 @@
     <ClCompile Include="CEFFECT.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CSAVE.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CGAME.h">
@@ -75,6 +78,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CEFFECT.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CSAVE.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

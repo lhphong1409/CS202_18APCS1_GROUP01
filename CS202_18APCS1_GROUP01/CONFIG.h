@@ -3,6 +3,10 @@
 
 #include "TEMPLATE.h"
 
-void autoConfig();
-void GotoXY(int x, int y);
+const int nLane = 3; // default;
+const int max_lane_size = 1500;
+const int vehicle_dis = 150;
+const int animal_dis = 150;
+const int FPS = 60;
+
 #endif

@@ -129,6 +129,7 @@
     <ClCompile Include="CGAME.cpp" />
     <ClCompile Include="CONFIG.cpp" />
     <ClCompile Include="CPEOPLE.cpp" />
+    <ClCompile Include="CSAVE.cpp" />
     <ClCompile Include="CTRAFFICLIGHT.cpp" />
     <ClCompile Include="CVEHICLE.cpp" />
     <ClCompile Include="DATA.cpp" />
@@ -141,6 +142,7 @@
     <ClInclude Include="CGAME.h" />
     <ClInclude Include="CONFIG.h" />
     <ClInclude Include="CPEOPLE.h" />
+    <ClInclude Include="CSAVE.h" />
     <ClInclude Include="CTRAFFICLIGHT.h" />
     <ClInclude Include="CVEHICLE.h" />
     <ClInclude Include="DATA.h" />
