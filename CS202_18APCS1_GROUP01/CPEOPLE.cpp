@@ -15,6 +15,10 @@ int CPEOPLE::getEffect(EFFECT idEffect){
 	return (effectState[idEffect] > 0);
 }
 
+int CPEOPLE::getTimeEffect(int idEffect){
+	return effectState[idEffect];
+}
+
 void CPEOPLE::updatePos(int x, int y){
 	mX = x;
 	mY = y;

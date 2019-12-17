@@ -56,4 +56,6 @@ const std::string image_effect[3] =
 };
 const std::string image_people = "image/player/player1.bmp";
 const std::string image_trafficlight = "image/trafficLight/tflight.bmp";
+
+const std::string text_save = "save/save.txt";
 #endif 

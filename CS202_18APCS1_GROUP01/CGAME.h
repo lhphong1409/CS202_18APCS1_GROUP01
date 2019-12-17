@@ -26,6 +26,7 @@ private:
 public:
 	CGAME();
 	SDL_Texture* loadTexture(std::string path);
+	void screenShot(std::string savePath);
 	void TextureLoad();
 	void Text_Load(const std::string Text, const int dX, const int dY);
 	void Menu_Load(int curChoice);
@@ -35,6 +36,8 @@ public:
 	void Vehicle_Load();
 	void Animals_Load();
 	void TrafficLight_Load();
+	void saveGame();
+	void loadGame();
 	void drawGame();
 	void playGame();
 };

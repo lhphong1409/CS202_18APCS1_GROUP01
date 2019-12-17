@@ -8,6 +8,7 @@
 #include "PATH.h"
 #include "DATA.h"
 #include "CONFIG.h"
+
 class CSAVE {
 public:
 	int level;
@@ -21,5 +22,8 @@ public:
 	int CheckState();
 	void SetLane(int laneID, bool objectType);
 	void Init();
+
+	//demo.txt
+	
 };
 #endif

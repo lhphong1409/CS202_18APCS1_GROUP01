@@ -17,6 +17,7 @@ public:
 	int getmY();
 	int getV();
 	int getEffect(EFFECT idEffect);
+	int getTimeEffect(int idEffect);
 	void updatePos(int x, int y);
 	void changeEffect(EFFECT idEffect, int timeEffect);
 	void countdownEffect();

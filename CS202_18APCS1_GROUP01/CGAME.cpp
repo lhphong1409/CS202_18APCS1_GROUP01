@@ -25,6 +25,15 @@ SDL_Texture* CGAME::loadTexture(std::string path){
 	return newTexture;
 }
 
+void CGAME::screenShot(std::string savePath){
+	std::cout << "Screen Ok\n" << savePath << "\n";
+	SDL_Surface *sshot = SDL_CreateRGBSurface(0, 1600, 900, 32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
+	SDL_RenderReadPixels(renderer, NULL, SDL_PIXELFORMAT_ARGB8888, sshot->pixels, sshot->pitch);
+	SDL_SaveBMP(sshot, savePath.c_str());
+	SDL_FreeSurface(sshot);
+
+}
+
 void CGAME::TextureLoad() {
 	carTexture = loadTexture(image_vehicle_car);
 	busTexture = loadTexture(image_vehicle_bus);
@@ -331,9 +340,38 @@ void CGAME::TrafficLight_Load(){
 	return;
 }
 
+void CGAME::saveGame(){
+	std::fstream(out);
+	out.open(text_save);
+	for (int i = 0; i < saveList.size(); i++) {
+		out << saveList.size() << "\n";
+		out << saveList[i].level << "\n";
+		out << saveList[i].vehicleList.size() << "\n";
+		for (int iVe = 0; iVe < saveList[i].vehicleList.size(); iVe++) {
+			out << saveList[i].vehicleList[iVe].type << " " << saveList[i].vehicleList[iVe].mX << " " << saveList[i].vehicleList[iVe].mY << " " << saveList[i].vehicleList[iVe].lane << "\n";
+		}
+		for (int iAni = 0; iAni < saveList[i].animalList.size(); iAni++) {
+			out << saveList[i].animalList[iAni].type << " " << saveList[i].animalList[iAni].mX << " " << saveList[i].animalList[iAni].mY << " " << saveList[i].animalList[iAni].lane << "\n";
+		}
+		for (int iEff = 0; iEff < saveList[i].effectList.size(); iEff++) {
+			out << saveList[i].effectList[iEff].type << " " << saveList[i].effectList[iEff].mX << " " << saveList[i].effectList[iEff].mY << " " << saveList[i].effectList[iEff].lane << "\n";
+		}
+		for (int iLan = 0; iLan < saveList[i].vLane.size(); iLan++) {
+			out << saveList[i].vLane[iLan].light.getTime() << " " << saveList[i].vLane[iLan].light.getState() << "\n";
+		}
+		out << saveList[i].player.getmX() << " " << saveList[i].player.getmY() << " ";
+		for (int iState = 0; iState < 3; iState++) {
+			out << saveList[i].player.getTimeEffect(iState) << " ";
+		}
+		out << saveList[i].path;
+		out << "\n";
+	}
+	out.close();
+}
+
 void CGAME::drawGame(){
+	screenShot("save/image/1.bmp");
 	while (saveList[idGame].isRunning) {
-		std::cerr << idGame << "\n";
 		++frame;
 		frame %= FPS;
 		SDL_RenderClear(renderer);
@@ -449,6 +487,9 @@ void CGAME::playGame(){
 			while (saveList.back().level != -1) {
 				saveList.back().Init();
 				drawGame();
+			}
+			if (saveList.size() > 0 && saveList.back().level == -1) {
+				saveList.back();
 			}
 			curChoice = 0;
 			userChoice = -1;
