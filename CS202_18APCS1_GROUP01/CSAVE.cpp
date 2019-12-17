@@ -69,26 +69,31 @@ int CSAVE::CheckState() {
 	pxr = player.getmX() - 50 + 110;
 	pyl = player.getmY() + 20;
 	pyr = player.getmY() - 20 + 110;
+	int iVeDel = -1, iAniDel = -1;
 	for (int iVe = 0; iVe < vehicleList.size(); iVe++) {
 		if (pxl >= vehicleList[iVe].mX && pxl <= vehicleList[iVe].mX + vehicleList[iVe].sX
 			&& pyl >= vehicleList[iVe].mY && pyl <= vehicleList[iVe].mY + vehicleList[iVe].sY) {
+			iVeDel = iVe;
 			live = 0;
 			break;
 		}
 		if (pxr >= vehicleList[iVe].mX && pxr <= vehicleList[iVe].mX + vehicleList[iVe].sX
 			&& pyr >= vehicleList[iVe].mY && pyr <= vehicleList[iVe].mY + vehicleList[iVe].sY) {
+			iVeDel = iVe;
 			player.mState = 0;
 			live = 0;
 			break;
 		}
 		if (pxl >= vehicleList[iVe].mX && pxl <= vehicleList[iVe].mX + vehicleList[iVe].sX
 			&& pyr >= vehicleList[iVe].mY && pyr <= vehicleList[iVe].mY + vehicleList[iVe].sY) {
+			iVeDel = iVe;
 			player.mState = 0;
 			live = 0;
 			break;
 		}
 		if (pxr >= vehicleList[iVe].mX && pxr <= vehicleList[iVe].mX + vehicleList[iVe].sX
 			&& pyl >= vehicleList[iVe].mY && pyl <= vehicleList[iVe].mY + vehicleList[iVe].sY) {
+			iVeDel = iVe;
 			player.mState = 0;
 			live = 0;
 			break;
@@ -97,23 +102,27 @@ int CSAVE::CheckState() {
 	for (int iVe = 0; iVe < animalList.size(); iVe++) {
 		if (pxl >= animalList[iVe].mX && pxl <= animalList[iVe].mX + animalList[iVe].sX
 			&& pyl >= animalList[iVe].mY && pyl <= animalList[iVe].mY + animalList[iVe].sY) {
+			iAniDel = iVe;
 			live = 0;
 			break;
 		}
 		if (pxr >= animalList[iVe].mX && pxr <= animalList[iVe].mX + animalList[iVe].sX
 			&& pyr >= animalList[iVe].mY && pyr <= animalList[iVe].mY + animalList[iVe].sY) {
+			iAniDel = iVe;
 			player.mState = 0;
 			live = 0;
 			break;
 		}
 		if (pxl >= animalList[iVe].mX && pxl <= animalList[iVe].mX + animalList[iVe].sX
 			&& pyr >= animalList[iVe].mY && pyr <= animalList[iVe].mY + animalList[iVe].sY) {
+			iAniDel = iVe;
 			player.mState = 0;
 			live = 0;
 			break;
 		}
 		if (pxr >= animalList[iVe].mX && pxr <= animalList[iVe].mX + animalList[iVe].sX
 			&& pyl >= animalList[iVe].mY && pyl <= animalList[iVe].mY + animalList[iVe].sY) {
+			iAniDel = iVe;
 			player.mState = 0;
 			live = 0;
 			break;
@@ -157,7 +166,11 @@ int CSAVE::CheckState() {
 	}
 	if (!live) {
 		if (player.getEffect(SHIELD)) {
-			player.changeEffect(SHIELD, 2);
+			player.changeEffect(SHIELD, 0);
+			if (iVeDel >= 0)
+				vehicleList.erase(vehicleList.begin() + iVeDel);
+			if (iAniDel >= 0)
+				animalList.erase(animalList.begin() + iAniDel);
 			return 0;
 		}
 		return -1;

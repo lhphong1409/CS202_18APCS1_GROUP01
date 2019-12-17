@@ -460,16 +460,19 @@ void CGAME::playGame(){
 					break;
 				}
 				case SDLK_UP: {
+					PlaySound("music/select/select.wav", GetModuleHandle(NULL), SND_FILENAME | SND_ASYNC);
 					--curChoice;
 					curChoice = max(curChoice, 0);
 					break;
 				}
 				case SDLK_DOWN: {
+					PlaySound("music/select/select.wav", GetModuleHandle(NULL), SND_FILENAME | SND_ASYNC);
 					++curChoice;
 					curChoice = min(curChoice, 3);
 					break;
 				}
 				case SDLK_RETURN: {
+					PlaySound("music/enter/enter.wav", GetModuleHandle(NULL), SND_FILENAME | SND_ASYNC);
 					userChoice = curChoice;
 					break;
 				}
@@ -482,6 +485,7 @@ void CGAME::playGame(){
 		SDL_RenderPresent(renderer);
 		switch (userChoice) {
 		case (0):
+			PlaySound("music/musicgame/musicgame.wav", GetModuleHandle(NULL), SND_FILENAME | SND_ASYNC | SND_LOOP);
 			saveList.push_back(CSAVE());
 			idGame = saveList.size() - 1;
 			while (saveList.back().level != -1) {
@@ -489,7 +493,8 @@ void CGAME::playGame(){
 				drawGame();
 			}
 			if (saveList.size() > 0 && saveList.back().level == -1) {
-				saveList.back();
+				saveList.pop_back();
+				PlaySound("music/collision/collision1.wav", GetModuleHandle(NULL), SND_FILENAME | SND_ASYNC);
 			}
 			curChoice = 0;
 			userChoice = -1;
