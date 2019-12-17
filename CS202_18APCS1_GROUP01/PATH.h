@@ -54,7 +54,12 @@ const std::string image_effect[3] =
 "image/effect/shield.bmp",
 "image/effect/redlight.bmp",
 };
-const std::string image_people = "image/player/player1.bmp";
+const std::string image_people[4] = {
+"image/player/player1.bmp",
+"image/player/player2.bmp",
+"image/player/player3.bmp",
+"image/player/player4.bmp"
+};
 const std::string image_trafficlight = "image/trafficLight/tflight.bmp";
 
 const std::string image_save[2] = 
@@ -78,4 +83,23 @@ const std::string image_load[12] = {
 "image/load/11.bmp",
 "image/load/12.bmp",
 };
+
+const std::string image_option[14] = {
+"image/option/0.bmp",
+"image/option/1.bmp",
+"image/option/2.bmp",
+"image/option/3.bmp",
+"image/option/4.bmp",
+"image/option/5.bmp",
+"image/option/6.bmp",
+"image/option/7.bmp",
+"image/option/8.bmp",
+"image/option/9.bmp",
+"image/option/10.bmp",
+"image/option/11.bmp",
+"image/option/12.bmp",
+"image/option/13.bmp",
+};
+
+const std::string image_about = "image/about/about.bmp";
 #endif 

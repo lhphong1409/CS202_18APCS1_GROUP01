@@ -48,7 +48,7 @@ void CGAME::TextureLoad() {
 	menuTexture[2] = loadTexture(image_menu[2]);
 	menuTexture[3] = loadTexture(image_menu[3]);
 
-	peopleTexture = loadTexture(image_people);
+	peopleTexture = loadTexture(image_people[characterID]);
 	trafficlightTexture = loadTexture(image_trafficlight);
 
 	saveTexture[0] = loadTexture(image_save[0]);
@@ -70,6 +70,11 @@ void CGAME::TextureLoad() {
 	for (int i = 0; i < 12; i++) {
 		loadiTexture[i] = loadTexture(image_load[i]);
 	}
+
+	for (int i = 0; i < 14; i++) {
+		optionTexture[i] = loadTexture(image_option[i]);
+	}
+	aboutTexture = loadTexture(image_about);
 	return;
 }
 
@@ -360,7 +365,6 @@ void CGAME::Save_Load(int curChoice){
 }
 
 void CGAME::Load_Load(int curChoice){
-	std::cerr << curChoice << "\n";
 	SDL_Rect sourceRect, desRect;
 	int showList = (curChoice / 4) * 4;
 	if (curChoice >= ((saveImage.size() / 4 * 4)))
@@ -403,6 +407,44 @@ void CGAME::Load_Load(int curChoice){
 		SDL_RenderCopy(renderer, saveImage[i], &sourceRect, &desRect);
 	}
 	return;
+}
+
+void CGAME::Option_Load(int curChoice){
+	SDL_Rect sourceRect, desRect;
+	SDL_QueryTexture(optionTexture[curChoice], NULL, NULL, &sourceRect.w, &sourceRect.h);
+	sourceRect.x = sourceRect.y = desRect.x = desRect.y = 0;
+	desRect.w = sourceRect.w;
+	desRect.h = sourceRect.h;
+	SDL_RenderCopy(renderer, optionTexture[curChoice], &sourceRect, &desRect);
+	return;
+}
+
+void CGAME::About_Load(){
+	SDL_Rect sourceRect, desRect;
+	SDL_QueryTexture(aboutTexture, NULL, NULL, &sourceRect.w, &sourceRect.h);
+	sourceRect.x = sourceRect.y = desRect.x = desRect.y = 0;
+	desRect.w = sourceRect.w;
+	desRect.h = sourceRect.h;
+	bool running = 1;
+	SDL_Event gameEvent;
+	while (running) {
+		SDL_RenderCopy(renderer, aboutTexture, &sourceRect, &desRect);
+		while (SDL_PollEvent(&gameEvent)) {
+			switch (gameEvent.type) {
+			case SDL_KEYDOWN: {
+				switch (gameEvent.key.keysym.sym) {
+				case SDLK_ESCAPE: {
+					running = 0;
+					return;
+				}
+				default:
+					break;
+				}
+			}
+			}
+		}
+		SDL_RenderPresent(renderer);
+	}
 }
 
 bool CGAME::userSaveChoice(){
@@ -522,6 +564,196 @@ int CGAME::getIdgame(){
 		}
 	}
 	return false;
+}
+
+void CGAME::getCharMusic(){
+	SDL_Event gameEvent;
+	bool running = 1;
+	int userChoice = -1, curChoice;
+	curChoice = 9 * (1 - Sound) + characterID + 1;
+	while (running) {
+		std::cerr << characterID << " " << Sound << "\n";
+		Option_Load(curChoice);
+		while (SDL_PollEvent(&gameEvent)) {
+			switch (gameEvent.type) {
+			case SDL_KEYDOWN: {
+				switch (gameEvent.key.keysym.sym) {
+				case SDLK_ESCAPE: {
+					running = 0;
+					break;
+				}
+				case SDLK_LEFT: {
+					switch (curChoice) {
+					case(1):
+						--curChoice;
+						break;
+					case(2):
+						--curChoice;
+						break;
+					case(3):
+						--curChoice;
+						break;
+					case(4):
+						--curChoice;
+						break;
+					case(6): {
+						curChoice = 5;
+						break;
+					}
+					case(7): {
+						curChoice = 8;
+						break;
+					}
+					case(10):
+						--curChoice;
+						break;
+					
+					case(11):
+						--curChoice;
+						break;
+					case(12):
+						--curChoice;
+						break;
+					case(13):
+						--curChoice;
+						break;
+					default:
+						break;
+					}
+					break;
+				}
+				case SDLK_RIGHT: {
+					switch (curChoice) {
+					case(0):
+						++curChoice;
+						break;
+					case(1):
+						++curChoice;
+						break;
+					case(2):
+						++curChoice;
+						break;
+					case(3):
+						++curChoice;
+						break;
+					case(5):
+						++curChoice;
+						break;
+					case(8):
+						curChoice = 7;
+						break;
+					case(9):
+						++curChoice;
+						break;
+					case(10):
+						++curChoice;
+						break;
+					case(11):
+						++curChoice;
+						break;
+					case(12):
+						++curChoice;
+						break;
+					default:
+						break;
+					}
+					break;
+				}
+				case SDLK_UP: {
+					switch (curChoice) {
+					case(5):
+						curChoice = 0;
+						break;
+					case(8):
+						curChoice = 9;
+						break;
+					default:
+						break;
+					}
+					break;
+				}
+				case SDLK_DOWN: {
+					switch (curChoice) {
+					case(0):
+						curChoice = 5;
+						break;
+					case(9):
+						curChoice = 8;
+						break;
+					default:
+						break;
+					}
+					break;
+				}
+				case SDLK_RETURN: {
+					if (curChoice == 6)
+						curChoice = 7;
+					else if (curChoice == 7)
+						curChoice = 6;
+					userChoice = curChoice;
+					break;
+				}
+				
+				default:
+					break;
+				}
+			}
+			}
+		}
+		SDL_RenderPresent(renderer);
+		switch (userChoice) {
+		case(0):
+			break;
+		case(1):
+			characterID = 0;
+			Sound = 1;
+			break;
+		case(2):
+			characterID = 1;
+			Sound = 1;
+			break;
+		case(3):
+			characterID = 2;
+			Sound = 1;
+			break;
+		case(4):
+			characterID = 3;
+			Sound = 1;
+			break;
+		case(5):
+			break;
+		case(6):
+			Sound = 1;
+			break;
+		case(7):
+			Sound = 0;
+			break;
+		case(8):
+			break;
+		case(9):
+			break;
+		case(10):
+			characterID = 0;
+			Sound = 0;
+			break;
+		case(11):
+			characterID = 1;
+			Sound = 0;
+			break;
+		case(12):
+			characterID = 2;
+			Sound = 0;
+			break;
+		case(13):
+			characterID = 3;
+			Sound = 0;
+			break;
+		default:
+			break;
+		}
+	}
+	peopleTexture = loadTexture(image_people[characterID]);
+
 }
 
 void CGAME::saveGame(){
@@ -719,7 +951,6 @@ void CGAME::playGame(){
 	bool running = 1;
 	int userChoice = -1, curChoice = 0;
 	while (running) {
-		std::cerr << userChoice << " " << curChoice << "\n";
 		SDL_RenderClear(renderer);
 		Menu_Load(curChoice);
 		while (SDL_PollEvent(&gameEvent)) {
@@ -786,6 +1017,16 @@ void CGAME::playGame(){
 			break;
 		}
 		case(2): {
+			getCharMusic();
+			curChoice = 0;
+			userChoice = -1;
+			break;
+		}
+		case(3): {
+			About_Load();
+			curChoice = 0;
+			userChoice = -1;
+			break;
 		}
 		default:
 
