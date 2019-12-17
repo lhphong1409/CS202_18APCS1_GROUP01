@@ -5,10 +5,10 @@
 
 class CPEOPLE {
 private:
-	int mX, mY;	
 	int v;
 	int effectState[3] = { 0, 0, 0 };
 public:
+	int mX, mY;
 	bool mState;
 	int flip = 0;
 	int animation_flip = 0;

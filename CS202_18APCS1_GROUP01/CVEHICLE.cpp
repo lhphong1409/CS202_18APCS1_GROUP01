@@ -1,5 +1,9 @@
 #include "CVEHICLE.h"
 
+CVEHICLE::CVEHICLE()
+{
+}
+
 CVEHICLE::CVEHICLE(int x, int y, int l){
 	mX = x;
 	mY = y;

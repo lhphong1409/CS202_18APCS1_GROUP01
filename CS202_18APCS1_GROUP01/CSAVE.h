@@ -11,8 +11,9 @@
 
 class CSAVE {
 public:
+	CSAVE();
 	int level;
-	bool isRunning = 1;
+	bool isRunning;
 	std::vector<CVEHICLE> vehicleList;
 	std::vector<CANIMALS> animalList;
 	std::vector<CEFFECT> effectList;

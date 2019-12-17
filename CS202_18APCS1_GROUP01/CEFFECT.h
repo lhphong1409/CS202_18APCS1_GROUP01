@@ -7,6 +7,7 @@ public:
 	enum EFFECT type;
 	int mX, mY, sX, sY;
 	int lane;
+	CEFFECT() {};
 	CEFFECT(int x, int y, int lID);
 	CEFFECT(int x, int y, EFFECT typeEffect, int lID);
 };

@@ -6,6 +6,7 @@
 class CGAME {
 private:
 	std::vector<CSAVE> saveList;
+	CSAVE curSave;
 	SDL_Window *window = NULL;
 	SDL_Renderer *renderer = NULL;
 	SDL_Event mainEvent;
@@ -21,7 +22,7 @@ private:
 	SDL_Texture *trafficlightTexture = NULL;
 	SDL_Texture *menuTexture[4];
 	SDL_Texture *numberTexture[10];
-	int idGame;
+	int idGame ;
 	int frame = 0;
 public:
 	CGAME();

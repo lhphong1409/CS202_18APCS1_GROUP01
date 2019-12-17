@@ -1,5 +1,9 @@
 #include "CANIMALS.h"
 
+CANIMALS::CANIMALS(){
+	anima = 0;
+}
+
 CANIMALS::CANIMALS(int x, int y, int l) {
 	mX = x;
 	mY = y;

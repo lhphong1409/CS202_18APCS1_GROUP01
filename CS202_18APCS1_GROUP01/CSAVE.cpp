@@ -62,6 +62,12 @@ void CSAVE::SetLane(int laneID, bool objectType) { // 0 : vehicle, 1 : animal
 	return;
 }
 
+CSAVE::CSAVE(){
+	isRunning = 1;
+	level = 1;
+	return;
+}
+
 int CSAVE::CheckState() {
 	bool live = 1;
 	int pxl, pyl, pxr, pyr;

@@ -5,7 +5,7 @@ CGAME::CGAME(){
 	TTF_Init();
 	window = SDL_CreateWindow("CrossRoad-Group-01.exe", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1600, 900, SDL_WINDOW_SHOWN);
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-
+	loadGame();
 	// lane : 10 x 180:
 	// set for CCAR
 	TextureLoad();
@@ -78,7 +78,7 @@ void CGAME::Menu_Load(int curChoice) {
 void CGAME::People_Load(const int animation){
 	// 80x80
 	if (frame == 0) {
-		saveList[idGame].player.countdownEffect();
+		curSave.player.countdownEffect();
 	}
 	SDL_Rect sourceRect, desRect;
 	SDL_QueryTexture(peopleTexture, NULL, NULL, &sourceRect.w, &sourceRect.h);
@@ -150,8 +150,8 @@ void CGAME::People_Load(const int animation){
 	int animateSize = sourceRect.w / 4;
 	sourceRect.x *= animateSize;
 	sourceRect.y *= animateSize;
-	desRect.x = saveList[idGame].player.getmX();
-	desRect.y = saveList[idGame].player.getmY();
+	desRect.x = curSave.player.getmX();
+	desRect.y = curSave.player.getmY();
 	desRect.w = sourceRect.w = animateSize;
 	desRect.h = sourceRect.h = animateSize;
 	SDL_RenderCopy(renderer, peopleTexture, &sourceRect, &desRect);
@@ -180,16 +180,16 @@ void CGAME::Text_Load(const std::string Text, const int dX, const int dY) {
 
 void CGAME::Background_Load() {
 	SDL_Rect sourceRect, desRect;
-	SDL_QueryTexture(backgroundTexture[saveList[idGame].level%3], NULL, NULL, &sourceRect.w, &sourceRect.h);
+	SDL_QueryTexture(backgroundTexture[curSave.level%3], NULL, NULL, &sourceRect.w, &sourceRect.h);
 	sourceRect.x = sourceRect.y = desRect.x = desRect.y = 0;
 	desRect.w = sourceRect.w;
 	desRect.h = sourceRect.h;
-	SDL_RenderCopy(renderer, backgroundTexture[saveList[idGame].level%3], &sourceRect, &desRect);
+	SDL_RenderCopy(renderer, backgroundTexture[curSave.level%3], &sourceRect, &desRect);
 	std::string leadingZero = "";
-	if (saveList[idGame].level < 10) {
+	if (curSave.level < 10) {
 		leadingZero = "0";
 	}
-	Text_Load("level " + leadingZero + std::to_string(saveList[idGame].level), 1350, 15);
+	Text_Load("level " + leadingZero + std::to_string(curSave.level), 1350, 15);
 	return;
 }
 
@@ -198,25 +198,25 @@ void CGAME::Effect_Load() {
 	sourceRect.x = sourceRect.y = 0;
 	desRect.w = sourceRect.w = 80;
 	desRect.h = sourceRect.h = 80;
-	for (int i = 0; i < saveList[idGame].effectList.size(); i++) {
-		desRect.x = saveList[idGame].effectList[i].mX;
-		desRect.y = saveList[idGame].effectList[i].mY;
+	for (int i = 0; i < curSave.effectList.size(); i++) {
+		desRect.x = curSave.effectList[i].mX;
+		desRect.y = curSave.effectList[i].mY;
 		if (frame % (FPS / 6) == 0) { // EFFECT ANIMATION
-			saveList[idGame].effectList[i].mY += 4;
-			if (saveList[idGame].effectList[i].mY > lanePixel[saveList[idGame].effectList[i].lane] + 20) {
-				saveList[idGame].effectList[i].mY = lanePixel[saveList[idGame].effectList[i].lane];
+			curSave.effectList[i].mY += 4;
+			if (curSave.effectList[i].mY > lanePixel[curSave.effectList[i].lane] + 20) {
+				curSave.effectList[i].mY = lanePixel[curSave.effectList[i].lane];
 			}
 		}
-		SDL_RenderCopy(renderer, effectTexture[saveList[idGame].effectList[i].type], &sourceRect, &desRect);
+		SDL_RenderCopy(renderer, effectTexture[curSave.effectList[i].type], &sourceRect, &desRect);
 	}
-	desRect.x = saveList[idGame].player.getmX()+15;
-	desRect.y = saveList[idGame].player.getmY()+15;
+	desRect.x = curSave.player.getmX()+15;
+	desRect.y = curSave.player.getmY()+15;
 
-	if (saveList[idGame].player.getEffect(SHIELD)) {
+	if (curSave.player.getEffect(SHIELD)) {
 		std::wcerr<<"SHIELD: "  << desRect.x << " " << desRect.y << "\n";
 		SDL_RenderCopy(renderer, effectTexture[EFFECT::SHIELD], &sourceRect, &desRect);
 	}
-	if (saveList[idGame].player.getEffect(SLOW)) {
+	if (curSave.player.getEffect(SLOW)) {
 		std::wcerr <<"SLOW "<< desRect.x << " " << desRect.y << "\n";
 		SDL_RenderCopy(renderer, effectTexture[EFFECT::SLOW], &sourceRect, &desRect);
 	}
@@ -225,8 +225,8 @@ void CGAME::Effect_Load() {
 void CGAME::Vehicle_Load(){
 	SDL_Rect sourceRect, desRect;
 	SDL_Texture *curTexture;
-	for (int iVe = 0; iVe < saveList[idGame].vehicleList.size(); iVe++) {
-		switch (saveList[idGame].vehicleList[iVe].type){
+	for (int iVe = 0; iVe < curSave.vehicleList.size(); iVe++) {
+		switch (curSave.vehicleList[iVe].type){
 		case OBJECT::BUS:
 			curTexture = busTexture;
 			break;
@@ -245,12 +245,12 @@ void CGAME::Vehicle_Load(){
 		sourceRect.x = sourceRect.y = 0;
 		desRect.w = sourceRect.w;
 		desRect.h = sourceRect.h;
-		desRect.x = saveList[idGame].vehicleList[iVe].mX;
-		desRect.y = saveList[idGame].vehicleList[iVe].mY;
+		desRect.x = curSave.vehicleList[iVe].mX;
+		desRect.y = curSave.vehicleList[iVe].mY;
 		SDL_RenderCopy(renderer, curTexture, &sourceRect, &desRect);
-		saveList[idGame].vehicleList[iVe].setV((saveList[idGame].level / 3 + saveList[idGame].vehicleList[iVe].default_v) * (saveList[idGame].vLane[saveList[idGame].vehicleList[iVe].lane].light.getState() != RED) / (1 + saveList[idGame].player.getEffect(SLOW)));
-		saveList[idGame].vehicleList[iVe].move();
-		saveList[idGame].vehicleList[iVe].mX %= max_lane_size;
+		curSave.vehicleList[iVe].setV((curSave.level / 3 + curSave.vehicleList[iVe].default_v) * (curSave.vLane[curSave.vehicleList[iVe].lane].light.getState() != RED) / (1 + curSave.player.getEffect(SLOW)));
+		curSave.vehicleList[iVe].move();
+		curSave.vehicleList[iVe].mX %= max_lane_size;
 	}
 	return;
 }
@@ -258,37 +258,37 @@ void CGAME::Vehicle_Load(){
 void CGAME::Animals_Load() {
 	SDL_Rect sourceRect, desRect;
 	SDL_Texture* curTexture;
-	for (int iAni = 0; iAni < saveList[idGame].animalList.size(); iAni++) {
-		switch (saveList[idGame].animalList[iAni].type) {
+	for (int iAni = 0; iAni < curSave.animalList.size(); iAni++) {
+		switch (curSave.animalList[iAni].type) {
 		case OBJECT::DINOSAUR:
-			curTexture = dinosaurTexture[saveList[idGame].animalList[iAni].anima];
+			curTexture = dinosaurTexture[curSave.animalList[iAni].anima];
 			break;
 		case OBJECT::CROCODILE: 
-			curTexture = crocodileTexture[saveList[idGame].animalList[iAni].anima];
+			curTexture = crocodileTexture[curSave.animalList[iAni].anima];
 			break;
 		case OBJECT::HORSE:
-			curTexture = horseTexture[saveList[idGame].animalList[iAni].anima];
+			curTexture = horseTexture[curSave.animalList[iAni].anima];
 			break;
 
 		default:
-			curTexture = dinosaurTexture[saveList[idGame].animalList[iAni].anima];
+			curTexture = dinosaurTexture[curSave.animalList[iAni].anima];
 			break;
 		}
 		SDL_QueryTexture(curTexture, NULL, NULL, &sourceRect.w, &sourceRect.h);
 		sourceRect.x = sourceRect.y = 0;
 		desRect.w = sourceRect.w;
 		desRect.h = sourceRect.h;
-		desRect.x = saveList[idGame].animalList[iAni].mX;
-		desRect.y = saveList[idGame].animalList[iAni].mY;
+		desRect.x = curSave.animalList[iAni].mX;
+		desRect.y = curSave.animalList[iAni].mY;
 		SDL_RenderCopy(renderer, curTexture, &sourceRect, &desRect);
-		saveList[idGame].animalList[iAni].setV((saveList[idGame].level / 3 + saveList[idGame].animalList[iAni].default_v) / (1 + saveList[idGame].player.getEffect(SLOW)));
-		saveList[idGame].animalList[iAni].move();
-		//std::cerr << "anima : " << saveList[idGame].animalList[iAni].anima << " frame:" << frame << "\n";
+		curSave.animalList[iAni].setV((curSave.level / 3 + curSave.animalList[iAni].default_v) / (1 + curSave.player.getEffect(SLOW)));
+		curSave.animalList[iAni].move();
+		//std::cerr << "anima : " << curSave.animalList[iAni].anima << " frame:" << frame << "\n";
 		if (frame % (FPS / 6) == 0) {
-			++saveList[idGame].animalList[iAni].anima;
-			saveList[idGame].animalList[iAni].anima %= 4;
+			++curSave.animalList[iAni].anima;
+			curSave.animalList[iAni].anima %= 4;
 		}
-		saveList[idGame].animalList[iAni].mX %= max_lane_size;
+		curSave.animalList[iAni].mX %= max_lane_size;
 	}
 	return;
 }
@@ -300,7 +300,7 @@ void CGAME::TrafficLight_Load(){
 	SDL_QueryTexture(trafficlightTexture, NULL, NULL, &sourceRect.w, &sourceRect.h);
 	sourceRect.w /= 4;
 	for (int i = 0; i < nLane; i++) {
-		switch (saveList[idGame].vLane[i].light.getState()) {
+		switch (curSave.vLane[i].light.getState()) {
 		case RED: {
 			sourceRect.x = 0;
 			sourceRect.y = 0;
@@ -325,37 +325,40 @@ void CGAME::TrafficLight_Load(){
 			break;
 		}
 		if (frame == 0) {
-			saveList[idGame].vLane[i].light.CountDown();
+			curSave.vLane[i].light.CountDown();
 		}
 		desRect.w = desRect.h = 32;
 		desRect.x = 0;
 		desRect.y = lanePixel[i] - 32;
 		SDL_RenderCopy(renderer, trafficlightTexture, &sourceRect, &desRect);
-		if (saveList[idGame].vLane[i].light.getState() == OFF)
+		if (curSave.vLane[i].light.getState() == OFF)
 			continue;
 		desRect.x = 32;
 		sourceRect.x = sourceRect.y = 0;
-		SDL_RenderCopy(renderer, numberTexture[saveList[idGame].vLane[i].light.getTime()], &sourceRect, &desRect);
+		SDL_RenderCopy(renderer, numberTexture[curSave.vLane[i].light.getTime()], &sourceRect, &desRect);
 	}
 	return;
 }
 
 void CGAME::saveGame(){
-	std::fstream(out);
+	std::ofstream(out);
 	out.open(text_save);
+	out << saveList.size() << "\n";
 	for (int i = 0; i < saveList.size(); i++) {
-		out << saveList.size() << "\n";
 		out << saveList[i].level << "\n";
 		out << saveList[i].vehicleList.size() << "\n";
 		for (int iVe = 0; iVe < saveList[i].vehicleList.size(); iVe++) {
 			out << saveList[i].vehicleList[iVe].type << " " << saveList[i].vehicleList[iVe].mX << " " << saveList[i].vehicleList[iVe].mY << " " << saveList[i].vehicleList[iVe].lane << "\n";
 		}
+		out << saveList[i].animalList.size() << "\n";
 		for (int iAni = 0; iAni < saveList[i].animalList.size(); iAni++) {
 			out << saveList[i].animalList[iAni].type << " " << saveList[i].animalList[iAni].mX << " " << saveList[i].animalList[iAni].mY << " " << saveList[i].animalList[iAni].lane << "\n";
 		}
+		out << saveList[i].effectList.size() << "\n";
 		for (int iEff = 0; iEff < saveList[i].effectList.size(); iEff++) {
 			out << saveList[i].effectList[iEff].type << " " << saveList[i].effectList[iEff].mX << " " << saveList[i].effectList[iEff].mY << " " << saveList[i].effectList[iEff].lane << "\n";
 		}
+		out << saveList[i].vLane.size() << "\n";
 		for (int iLan = 0; iLan < saveList[i].vLane.size(); iLan++) {
 			out << saveList[i].vLane[iLan].light.getTime() << " " << saveList[i].vLane[iLan].light.getState() << "\n";
 		}
@@ -363,69 +366,151 @@ void CGAME::saveGame(){
 		for (int iState = 0; iState < 3; iState++) {
 			out << saveList[i].player.getTimeEffect(iState) << " ";
 		}
+		out << "\n";
 		out << saveList[i].path;
 		out << "\n";
 	}
 	out.close();
 }
 
+void CGAME::loadGame() {
+	std::ifstream(inp);
+	inp.open(text_save);
+	int saveSize = 0, objSize = 0, objType;
+	inp >> saveSize ;
+	for (int i = 0; i < saveSize; i++) {
+		saveList.push_back(CSAVE());
+		inp >> saveList[i].level;
+		inp >> objSize;
+		for (int iVe = 0; iVe < objSize; iVe++) {
+			inp >> objType;
+			switch (objType) {
+			case (OBJECT::BUS):
+				saveList[i].vehicleList.push_back(CBUS(0, 0, 0));
+				break;
+			case (OBJECT::CAR):
+				saveList[i].vehicleList.push_back(CCAR(0, 0, 0));
+				break;
+			case (OBJECT::TRUCK):
+				saveList[i].vehicleList.push_back(CTRUCK(0, 0, 0));
+				break;
+			default:
+				break;
+			}
+			inp >> saveList[i].vehicleList[iVe].mX >> saveList[i].vehicleList[iVe].mY >> saveList[i].vehicleList[iVe].lane;
+			saveList[i].vehicleList[iVe].type = OBJECT(objType);
+		}
+		inp >> objSize;
+		for (int iAni = 0; iAni < objSize; iAni++) {
+			inp >> objType;
+			switch (objType) {
+			case (OBJECT::CROCODILE):
+				saveList[i].animalList.push_back(CCROCODILE(0, 0, 0));
+				break;
+			case (OBJECT::DINOSAUR):
+				saveList[i].animalList.push_back(CDINOSAUR(0, 0, 0));
+				break;
+			case (OBJECT::HORSE):
+				saveList[i].animalList.push_back(CHORSE(0, 0, 0));
+				break;
+			default:
+				break;
+			}
+			inp >> saveList[i].animalList[iAni].mX >> saveList[i].animalList[iAni].mY >> saveList[i].animalList[iAni].lane;
+			saveList[i].animalList[iAni].type = OBJECT(objType);
+		}
+		inp >> objSize;
+		for (int iEff = 0; iEff < objSize; iEff++) {
+			saveList[i].effectList.push_back(CEFFECT());
+			inp >> objType >> saveList[i].effectList[iEff].mX   >> saveList[i].effectList[iEff].mY   >> saveList[i].effectList[iEff].lane  ;
+			saveList[i].effectList[iEff].type = EFFECT(objType);
+		}
+		inp >> objSize;
+		for (int iLan = 0; iLan < objSize; iLan++) {
+			saveList[i].vLane.push_back(laneType());
+			int TIME = 0, STATE;
+			inp >> TIME >> STATE;
+			saveList[i].vLane[iLan].light.setTime(TIME);
+			saveList[i].vLane[iLan].light.setState(LIGHTst(STATE));
+		}
+		inp >> saveList[i].player.mX >> saveList[i].player.mY ;
+		for (int iState = 0; iState < 3; iState++) {
+			int TIME;
+			inp >> TIME  ;
+			saveList[i].player.changeEffect(EFFECT(iState), TIME);
+		}
+		inp >> saveList[i].path;
+	}
+	inp.close();
+}
+
 void CGAME::drawGame(){
-	screenShot("save/image/1.bmp");
-	while (saveList[idGame].isRunning) {
+	std::cerr << "DRAW " << curSave.isRunning << "\n";
+	while (curSave.isRunning) {
 		++frame;
 		frame %= FPS;
 		SDL_RenderClear(renderer);
 		SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
 		Background_Load();
-		People_Load(saveList[idGame].player.flip + saveList[idGame].player.animation_flip);
+		People_Load(curSave.player.flip + curSave.player.animation_flip);
 		Effect_Load();
 		Vehicle_Load();
 		Animals_Load();
 		TrafficLight_Load();
 
-		int gameState = saveList[idGame].CheckState();
+		int gameState = curSave.CheckState();
 		if (gameState != 0) {
-			saveList[idGame].isRunning = 0;
+			curSave.isRunning = 0;
 			if (gameState < 0) {
-				saveList[idGame].level = -1;
+				curSave.level = -1;
+				PlaySound("music/collision/collision1.wav", GetModuleHandle(NULL), SND_FILENAME | SND_ASYNC);
 			}
 			else {
-				++saveList[idGame].level;
+				++curSave.level;
 			}
 		}
 		while (SDL_PollEvent(&mainEvent)) {
 			switch (mainEvent.type) {
 			case SDL_QUIT: {
-				saveList[idGame].isRunning = 0;
+				curSave.isRunning = 0;
 				break;
 			}
 			case SDL_KEYDOWN: {
-				++saveList[idGame].player.animation_flip;
-				saveList[idGame].player.animation_flip %= 3;
+				++curSave.player.animation_flip;
+				curSave.player.animation_flip %= 3;
 				switch (mainEvent.key.keysym.sym) {
 				case SDLK_ESCAPE: {
-					saveList[idGame].level = -1;
-					saveList[idGame].isRunning = 0;
+					curSave.path = "save/image/" + std::to_string(saveList.size()) + ".bmp";
+					saveList.push_back(curSave);
+					curSave.level = -1;
+					curSave.isRunning = 0;
+					screenShot(curSave.path);
+					//saveGame();
+					/*int saveChoice;
+					switch (saveChoice) {
+
+					}*/
+					
 					break;
 				}
 				case SDLK_UP: {
-					saveList[idGame].player.up();
-					saveList[idGame].player.flip = 0;
+					curSave.player.up();
+					curSave.player.flip = 0;
 					break;
 				}
 				case SDLK_DOWN: {
-					saveList[idGame].player.down();
-					saveList[idGame].player.flip = 3;
+					curSave.player.down();
+					curSave.player.flip = 3;
 					break;
 				}
 				case SDLK_LEFT: {
-					saveList[idGame].player.left();
-					saveList[idGame].player.flip = 6;
+					curSave.player.left();
+					curSave.player.flip = 6;
 					break;
 				}
 				case SDLK_RIGHT: {
-					saveList[idGame].player.right();
-					saveList[idGame].player.flip = 9;
+					curSave.player.right();
+					curSave.player.flip = 9;
 					break;
 				}
 				default:
@@ -444,6 +529,8 @@ void CGAME::drawGame(){
 }
 
 void CGAME::playGame(){
+	int cnt = 0;
+	std::cerr << saveList.size() << "\n";
 	SDL_Event gameEvent;
 	bool running = 1;
 	int userChoice = -1, curChoice = 0;
@@ -486,19 +573,26 @@ void CGAME::playGame(){
 		switch (userChoice) {
 		case (0):
 			PlaySound("music/musicgame/musicgame.wav", GetModuleHandle(NULL), SND_FILENAME | SND_ASYNC | SND_LOOP);
-			saveList.push_back(CSAVE());
-			idGame = saveList.size() - 1;
-			while (saveList.back().level != -1) {
-				saveList.back().Init();
+			curSave = CSAVE();
+			while (curSave.level > -1) {
+				curSave.Init();
 				drawGame();
-			}
-			if (saveList.size() > 0 && saveList.back().level == -1) {
-				saveList.pop_back();
-				PlaySound("music/collision/collision1.wav", GetModuleHandle(NULL), SND_FILENAME | SND_ASYNC);
+			} 
+			curChoice = 0;
+			userChoice = -1;
+			break;
+		case (1): {
+			PlaySound("music/musicgame/musicgame.wav", GetModuleHandle(NULL), SND_FILENAME | SND_ASYNC | SND_LOOP);
+			idGame = 0;
+			curSave = saveList[idGame];
+			while (curSave.level != -1) {
+				curSave.Init();
+				drawGame();
 			}
 			curChoice = 0;
 			userChoice = -1;
 			break;
+		}
 		default:
 			break;
 		}

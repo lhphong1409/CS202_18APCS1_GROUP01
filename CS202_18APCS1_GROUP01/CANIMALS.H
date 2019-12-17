@@ -3,6 +3,7 @@
 #include "PATH.h"
 class CANIMALS {
 public:
+	CANIMALS();
 	CANIMALS(int x, int y, int l);
 	int mX, mY, sX, sY; // row - col;
 	int v, default_v; // velocity 
