@@ -51,6 +51,9 @@ void CGAME::TextureLoad() {
 	peopleTexture = loadTexture(image_people);
 	trafficlightTexture = loadTexture(image_trafficlight);
 
+	saveTexture[0] = loadTexture(image_save[0]);
+	saveTexture[1] = loadTexture(image_save[1]);
+
 	for (int i = 0; i < 9; i++) {
 		numberTexture[i] = loadTexture(image_number[i]);
 	}
@@ -62,6 +65,10 @@ void CGAME::TextureLoad() {
 
 	for (int i = 0; i < 3; i++) {
 		effectTexture[i] = loadTexture(image_effect[i]);
+	}
+
+	for (int i = 0; i < 12; i++) {
+		loadiTexture[i] = loadTexture(image_load[i]);
 	}
 	return;
 }
@@ -340,6 +347,183 @@ void CGAME::TrafficLight_Load(){
 	return;
 }
 
+void CGAME::Save_Load(int curChoice){
+	SDL_Rect sourceRect, desRect;
+	SDL_QueryTexture(saveTexture[curChoice], NULL, NULL, &sourceRect.w, &sourceRect.h);
+	sourceRect.x = sourceRect.y = desRect.x = desRect.y = 0;
+	desRect.w = sourceRect.w;
+	desRect.h = sourceRect.h;
+	desRect.x = 400;
+	desRect.y = 225;
+	SDL_RenderCopy(renderer, saveTexture[curChoice], &sourceRect, &desRect);
+	return ;
+}
+
+void CGAME::Load_Load(int curChoice){
+	std::cerr << curChoice << "\n";
+	SDL_Rect sourceRect, desRect;
+	int showList = (curChoice / 4) * 4;
+	if (curChoice >= ((saveImage.size() / 4 * 4)))
+		curChoice = curChoice % 4 + 8;
+	else {
+		if(curChoice >= 4)
+			curChoice = curChoice % 4 + 4;
+	}
+	SDL_QueryTexture(loadiTexture[curChoice], NULL, NULL, &sourceRect.w, &sourceRect.h);
+	desRect.h = sourceRect.h;
+	desRect.w = sourceRect.w;
+	desRect.x = desRect.y = sourceRect.x = sourceRect.y = 0;
+	SDL_RenderCopy(renderer, loadiTexture[curChoice], &sourceRect, &desRect);
+	for (int i = showList; i < min(showList + 4, saveImage.size()); i++) {
+		SDL_QueryTexture(saveImage[i], NULL, NULL, &sourceRect.w, &sourceRect.h);
+		sourceRect.x = sourceRect.y = 0;
+		desRect.w = sourceRect.w / 5 - 10;
+		desRect.h = sourceRect.h / 5 - 10;
+
+		switch (i % 4) {
+		case(0):
+			desRect.x = 112;
+			desRect.y = 366;
+			break;
+		case(1):
+			desRect.x = 466;
+			desRect.y = 366;
+			break;
+		case(2):
+			desRect.x = 823;
+			desRect.y = 366;
+			break;
+		case(3):
+			desRect.x = 1178;
+			desRect.y = 366;
+			break;
+		default:
+			break;
+		}
+		SDL_RenderCopy(renderer, saveImage[i], &sourceRect, &desRect);
+	}
+	return;
+}
+
+bool CGAME::userSaveChoice(){
+	SDL_Event gameEvent;
+	bool running = 1;
+	int userChoice = -1, curChoice = 0;
+	while (running) {
+		Save_Load(curChoice);
+		while (SDL_PollEvent(&gameEvent)) {
+			switch (gameEvent.type) {
+			case SDL_KEYDOWN: {
+				switch (gameEvent.key.keysym.sym) {
+				case SDLK_ESCAPE: {
+					running = 0;
+					return 1;
+					break;
+				}
+				case SDLK_RIGHT: {
+					--curChoice;
+					curChoice = max(curChoice, 0);
+					break;
+				}
+				case SDLK_LEFT: {
+					++curChoice;
+					curChoice = min(curChoice, 1);
+					break;
+				}
+				case SDLK_RETURN: {
+					userChoice = curChoice;
+					break;
+				}
+				default:
+					break;
+				}
+			}
+			}
+		}
+		SDL_RenderPresent(renderer);
+		switch (userChoice) {
+		case (0):
+			return 0;
+			break;
+		case (1): {
+			return 1;
+			break;
+		}
+		default:
+			break;
+		}
+	}
+	return false;
+}
+
+int CGAME::getIdgame(){
+	SDL_Event gameEvent;
+	bool running = 1;
+	int userChoice = -1, curChoice = 0;
+	while (running) {
+		Load_Load(curChoice);
+		while (SDL_PollEvent(&gameEvent)) {
+			switch (gameEvent.type) {
+			case SDL_KEYDOWN: {
+
+				switch (gameEvent.key.keysym.sym) {
+				case SDLK_ESCAPE: {
+					running = 0;
+					return -1;
+					break;
+				}
+				case SDLK_LEFT: {
+					if (saveList.empty())
+						break;
+					--curChoice;
+					curChoice = max(curChoice, 0);
+					break;
+				}
+				case SDLK_RIGHT: {
+					if (saveList.empty())
+						break;
+					++curChoice;
+					curChoice = min(curChoice, saveImage.size()-1);
+					break;
+				}
+				case SDLK_RETURN: {
+					if (saveList.empty())
+						break;
+					return curChoice;
+					break;
+				}
+				case SDLK_DELETE: {
+					if (saveList.empty())
+						break;
+					saveList.erase(saveList.begin() + curChoice);
+					saveImage.erase(saveImage.begin() + curChoice);
+					curChoice = min(curChoice, saveList.size() - 1);
+					curChoice = max(curChoice, 0);
+					saveGame();
+					break;
+				}
+				default:
+					break;
+				}
+			}
+			}
+		}
+		SDL_RenderPresent(renderer);
+		switch (userChoice) {
+		case (0):
+			return 0;
+			break;
+		case (1): {
+			return 1;
+			break;
+		}
+		default:
+			break;
+		}
+	}
+	return false;
+}
+
 void CGAME::saveGame(){
 	std::ofstream(out);
 	out.open(text_save);
@@ -440,6 +624,7 @@ void CGAME::loadGame() {
 			saveList[i].player.changeEffect(EFFECT(iState), TIME);
 		}
 		inp >> saveList[i].path;
+		saveImage.push_back(loadTexture(saveList[i].path));
 	}
 	inp.close();
 }
@@ -482,14 +667,13 @@ void CGAME::drawGame(){
 				case SDLK_ESCAPE: {
 					curSave.path = "save/image/" + std::to_string(saveList.size()) + ".bmp";
 					saveList.push_back(curSave);
-					curSave.level = -1;
-					curSave.isRunning = 0;
 					screenShot(curSave.path);
-					//saveGame();
-					/*int saveChoice;
-					switch (saveChoice) {
-
-					}*/
+					saveImage.push_back(loadTexture(curSave.path));
+					saveGame();
+					if (!userSaveChoice()) {
+						curSave.level = -1;
+						curSave.isRunning = 0;
+					}
 					
 					break;
 				}
@@ -583,17 +767,28 @@ void CGAME::playGame(){
 			break;
 		case (1): {
 			PlaySound("music/musicgame/musicgame.wav", GetModuleHandle(NULL), SND_FILENAME | SND_ASYNC | SND_LOOP);
-			idGame = 0;
+			idGame = getIdgame();
+			if (idGame == -1) {
+				curChoice = 0;
+				userChoice = -1;
+				break;
+			}
 			curSave = saveList[idGame];
+			cnt = 0;
 			while (curSave.level != -1) {
-				curSave.Init();
+				if (cnt)
+					curSave.Init();
 				drawGame();
+				++cnt;
 			}
 			curChoice = 0;
 			userChoice = -1;
 			break;
 		}
+		case(2): {
+		}
 		default:
+
 			break;
 		}
 	}

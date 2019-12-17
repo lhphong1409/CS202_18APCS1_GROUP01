@@ -63,4 +63,19 @@ const std::string image_save[2] =
 	"image/save/saveyes.bmp",
 };
 const std::string text_save = "save/savefile.txt";
+
+const std::string image_load[12] = {
+"image/load/1.bmp",
+"image/load/2.bmp",
+"image/load/3.bmp",
+"image/load/4.bmp",
+"image/load/5.bmp",
+"image/load/6.bmp",
+"image/load/7.bmp",
+"image/load/8.bmp",
+"image/load/9.bmp",
+"image/load/10.bmp",
+"image/load/11.bmp",
+"image/load/12.bmp",
+};
 #endif 

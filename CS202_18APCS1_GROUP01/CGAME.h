@@ -22,6 +22,10 @@ private:
 	SDL_Texture *trafficlightTexture = NULL;
 	SDL_Texture *menuTexture[4];
 	SDL_Texture *numberTexture[10];
+	SDL_Texture *saveTexture[2];
+	SDL_Texture *loadiTexture[12];
+	std::vector<SDL_Texture*> saveImage;
+
 	int idGame ;
 	int frame = 0;
 public:
@@ -37,6 +41,11 @@ public:
 	void Vehicle_Load();
 	void Animals_Load();
 	void TrafficLight_Load();
+	void Save_Load(int curChoice);
+	void Load_Load(int curChoice);
+	bool userSaveChoice();
+	int getIdgame();
+
 	void saveGame();
 	void loadGame();
 	void drawGame();
