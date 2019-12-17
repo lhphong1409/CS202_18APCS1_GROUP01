@@ -101,5 +101,18 @@ const std::string image_option[14] = {
 "image/option/13.bmp",
 };
 
+const std::string image_youdied[10] = {
+"image/youdied/1.bmp",
+"image/youdied/2.bmp",
+"image/youdied/3.bmp",
+"image/youdied/4.bmp",
+"image/youdied/5.bmp",
+"image/youdied/6.bmp",
+"image/youdied/7.bmp",
+"image/youdied/8.bmp",
+"image/youdied/9.bmp",
+"image/youdied/10.bmp",
+};
+
 const std::string image_about = "image/about/about.bmp";
 #endif 

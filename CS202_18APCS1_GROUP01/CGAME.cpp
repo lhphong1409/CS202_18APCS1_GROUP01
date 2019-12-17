@@ -74,6 +74,11 @@ void CGAME::TextureLoad() {
 	for (int i = 0; i < 14; i++) {
 		optionTexture[i] = loadTexture(image_option[i]);
 	}
+	for (int i = 0; i < 10; i++)
+	{
+		diedTexture[i] = loadTexture(image_youdied[i]);
+	}
+		
 	aboutTexture = loadTexture(image_about);
 	return;
 }
@@ -447,6 +452,27 @@ void CGAME::About_Load(){
 	}
 }
 
+void CGAME::Died_Load()
+{
+	SDL_Rect sourceRect, desRect;
+	for (int i = 0; i < 10; i++)
+	{
+		std::cerr << "died" << "\n";
+		SDL_QueryTexture(diedTexture[i], NULL, NULL, &sourceRect.w, &sourceRect.h);
+		sourceRect.x = sourceRect.y = desRect.x = desRect.y = 0;
+		desRect.w = sourceRect.w;
+		desRect.h = sourceRect.h;
+		desRect.x = 800-sourceRect.w / 2;
+		desRect.y = 450-sourceRect.h / 2;
+		SDL_RenderCopy(renderer, diedTexture[i], &sourceRect, &desRect);
+		SDL_RenderPresent(renderer);
+		SDL_Delay(100);
+	}
+	SDL_Delay(100);
+	return;
+	
+}
+
 bool CGAME::userSaveChoice(){
 	SDL_Event gameEvent;
 	bool running = 1;
@@ -753,7 +779,6 @@ void CGAME::getCharMusic(){
 		}
 	}
 	peopleTexture = loadTexture(image_people[characterID]);
-
 }
 
 void CGAME::saveGame(){
@@ -874,13 +899,14 @@ void CGAME::drawGame(){
 		Vehicle_Load();
 		Animals_Load();
 		TrafficLight_Load();
-
 		int gameState = curSave.CheckState();
 		if (gameState != 0) {
 			curSave.isRunning = 0;
 			if (gameState < 0) {
 				curSave.level = -1;
-				PlaySound("music/collision/collision1.wav", GetModuleHandle(NULL), SND_FILENAME | SND_ASYNC);
+				if(Sound==1)
+					PlaySound("music/collision/collision1.wav", GetModuleHandle(NULL), SND_FILENAME | SND_ASYNC);
+				Died_Load();
 			}
 			else {
 				++curSave.level;
@@ -962,19 +988,22 @@ void CGAME::playGame(){
 					break;
 				}
 				case SDLK_UP: {
-					PlaySound("music/select/select.wav", GetModuleHandle(NULL), SND_FILENAME | SND_ASYNC);
+					if(Sound==1)
+						PlaySound("music/select/select.wav", GetModuleHandle(NULL), SND_FILENAME | SND_ASYNC);
 					--curChoice;
 					curChoice = max(curChoice, 0);
 					break;
 				}
 				case SDLK_DOWN: {
-					PlaySound("music/select/select.wav", GetModuleHandle(NULL), SND_FILENAME | SND_ASYNC);
+					if (Sound == 1)
+						PlaySound("music/select/select.wav", GetModuleHandle(NULL), SND_FILENAME | SND_ASYNC);
 					++curChoice;
 					curChoice = min(curChoice, 3);
 					break;
 				}
 				case SDLK_RETURN: {
-					PlaySound("music/enter/enter.wav", GetModuleHandle(NULL), SND_FILENAME | SND_ASYNC);
+					if (Sound == 1)
+						PlaySound("music/enter/enter.wav", GetModuleHandle(NULL), SND_FILENAME | SND_ASYNC);
 					userChoice = curChoice;
 					break;
 				}
@@ -987,7 +1016,8 @@ void CGAME::playGame(){
 		SDL_RenderPresent(renderer);
 		switch (userChoice) {
 		case (0):
-			PlaySound("music/musicgame/musicgame.wav", GetModuleHandle(NULL), SND_FILENAME | SND_ASYNC | SND_LOOP);
+			if (Sound==1)
+				PlaySound("music/musicgame/musicgame.wav", GetModuleHandle(NULL), SND_FILENAME | SND_ASYNC | SND_LOOP);
 			curSave = CSAVE();
 			while (curSave.level > -1) {
 				curSave.Init();
@@ -997,6 +1027,7 @@ void CGAME::playGame(){
 			userChoice = -1;
 			break;
 		case (1): {
+			if(Sound==1)
 			PlaySound("music/musicgame/musicgame.wav", GetModuleHandle(NULL), SND_FILENAME | SND_ASYNC | SND_LOOP);
 			idGame = getIdgame();
 			if (idGame == -1) {
